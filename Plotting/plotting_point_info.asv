@@ -1,0 +1,58 @@
+
+%% Clear data
+clc
+clear
+%% Specify the directory path
+directory = 'C:\Users\s202421\Desktop\DataCreation\points';
+% Initialize the model
+modelparams = load('model_struct'); 
+model = modelparams.model;
+% Get a list of .mat files in the directory
+fileList = dir(fullfile(directory, '*.mat'));
+w_refs = create_grid(0.1);
+% Loop through each .mat file
+table = zeros(length(fileList),9);
+for i = 1:length(fileList)
+    % Load the .mat file
+    filePath = fullfile(directory, fileList(i).name);
+    data = load(filePath);
+    
+    % Access the error data from the loaded .mat file
+    errors= data.error;
+    error = errors(end,:);
+    hand_Fs=data.handF_total';
+    hand_F = hand_Fs(:,end);
+    
+    xout = data.xout;
+
+    name =append('point',string(i) );
+    %load('equilibrium.mat')
+    %[xout, tout] = neurext_handf(name, 0 ,hand_F,x,5);
+    % Call the plot_error function
+    figure()
+    subplot(1, 3, 1);
+    hold on 
+    plot_error_position(errors);
+    subplot(1, 3, 2);
+    plot_hand_forces(hand_Fs);
+    subplot(1, 3, 3);
+    plot_wrist_positions(xout',model,w_refs(i,:));
+    
+    table(i,1:3)=w_refs(i,:);
+    table(i,4:6)=error;
+    table(i,7:9)=hand_F';
+end
+%%
+data = [
+    1.23, 4.56, 7.89, 0.12, 0.34, 0.56, 1.23, 2.34, 3.45;
+    2.34, 5.67, 8.90, 0.23, 0.45, 0.67, 2.34, 3.45, 4.56;
+    3.45, 6.78, 9.01, 0.34, 0.56, 0.78, 3.45, 4.56, 5.67
+];
+
+% Print table header
+fprintf('   x      y      z      x_err  y_err  z_err  Fx     Fy     Fz\n');
+fprintf('--------------------------------------------------------------\n');
+% Print data rows
+for i = 1:size(table, 1)
+    fprintf('%6.2f  %6.2f  %6.2f  %5.2f  %5.2f  %5.2f  %5.2f  %5.2f  %5.2f\n', data(i, :));
+end
