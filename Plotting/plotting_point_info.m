@@ -3,10 +3,12 @@
 clc
 clear
 %% Specify the directory path
-directory = 'C:\Users\s202421\Desktop\DataCreation\points';
+directory = 'C:\Users\s202421\Documents/GitHub/MasterThesis\DataCreation\points';
 % Initialize the model
 modelparams = load('model_struct'); 
 model = modelparams.model;
+das3('Initialize',model);
+
 % Get a list of .mat files in the directory
 fileList = dir(fullfile(directory, '*.mat'));
 w_refs = create_grid(0.1);
