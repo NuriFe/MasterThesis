@@ -3,7 +3,7 @@
 clc
 clear
 %% Specify the directory path
-directory = 'C:\Users\s202421\Documents/GitHub/MasterThesis\DataCreation\modelpoints/forces/deltoid_scapular';
+directory = 'C:\Users\s202421\Documents/GitHub/MasterThesis\DataCreation\modelpoints/forces/biceps';
 % Initialize the model
 modelparams = load('model_struct'); 
 model = modelparams.model;
@@ -13,14 +13,10 @@ das3('Initialize',model);
 fileList = dir(fullfile(directory, '*.mat'));
 %points
 %w_refs = create_grid(0.1);
-%muscles = 0;
+%muscle = 0;
 %forces
 w_refs = [];
-name = 'deltoid_scapular';
-%muscles = 83:1:85; %biceps
-%muscles = 109:1:115; %brachialis
-muscles = 48:1:51;
-
+muscle
 tocheck = [];
 %totest = [22 24 25 26 27 9]';
 %totest = [22 24 26];
@@ -50,9 +46,9 @@ for i = 1:length(fileList)
     xouts = data.xouts;
     xref = xouts(:,1);
     wref = wrist_position(xref);
-    w_refs = [w_refs wref];
+    w_refs = [w_refs wref'];
     %%
-    [error,xout_test] = testing(xouts, fs,wref,name,muscles,model);
+    [error,xout_test] = testing(xouts, fs,wref,model,muscle);
     wrist = string(wref');
     wrist_error = string(roundn(error',-3));
     
@@ -73,7 +69,7 @@ for i = 1:length(fileList)
     
 
 end
-plot_wrist_references(w_refs',model,tocheck);
+plot_wrist_references(wrefs,model,tocheck);
 
 l = string(length(fileList));
 name = append('C:\Users\s202421\Documents/Github/MasterThesis\DataCreation\points/testing',l );

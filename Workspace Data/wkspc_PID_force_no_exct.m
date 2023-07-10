@@ -61,7 +61,7 @@ w_refs = create_grid(0.1,model);
 %keyboard
 wrist_b = wrist_position(x);
 progressBar = waitbar(0, 'Progress; 0%');
-tocheck = [17 18 ];
+%tocheck = [17 18 ];
 
 %tocheck = [22,26];
 

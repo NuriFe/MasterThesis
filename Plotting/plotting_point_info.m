@@ -3,7 +3,7 @@
 clc
 clear
 %% Specify the directory path
-directory = 'C:\Users\s202421\Documents/GitHub/MasterThesis\DataCreation\forces';
+directory = 'C:\Users\s202421\Documents/GitHub/MasterThesis\DataCreation\modelpoints/';
 % Initialize the model
 modelparams = load('model_struct'); 
 model = modelparams.model;
@@ -14,8 +14,8 @@ fileList = dir(fullfile(directory, '*.mat'));
 w_refs = create_grid(0.1);
 % Loop through each .mat file
 table = zeros(length(fileList),9);
-wrists = zeros(length(fileList),3);
-
+wrists = zeros(length(w_refs),3);
+good = [];
 
 figure(); 
 
@@ -28,18 +28,18 @@ for i = 1:length(fileList)
     number = regexp(name, '\d+', 'match');
     % Convert the extracted number to a numeric value
     number = str2double(number);
-
+    good = [good number];
     data = load(filePath);
     
     % Access the error data from the loaded .mat file
-    errors= data.ers;
+    errors= data.error;
     error = errors(end,:);
-    hand_Fs=data.fs';
+    hand_Fs=data.handF_total';
     hand_F = hand_Fs(:,end);
     
-    xout = data.xouts;
+    xout = data.xout;
     x = xout(:,end);
-    wrists(i,:)=wrist_position(x);
+    wrists(number,:)=wrist_position(x);
     %load('equilibrium.mat')
     %[xout, tout] = neurext_handf(name, 0 ,hand_F,x,5);
     % Call the plot_error function
@@ -57,16 +57,18 @@ for i = 1:length(fileList)
     zlim([-0.93 0.43])
     view([-50.55 25.43])
     hold off
-    table(i,1:3)=w_refs(i,:);
+    table(i,1:3)=w_refs(number,:);
     table(i,4:6)=error;
     table(i,7:9)=hand_F';
-    keyboard
+    %keyboard
 end
 %%
 figure()
-plot_wrist_references(w_refs(1:i,:),model);
+w_good= w_refs(good,:);
+plot_wrist_references(w_good,model);
 hold on
-plot_wrist_references(wrists,model,'g.')
+wrists = wrists(good,:);
+plot_wrist_references(wrists,model,[],'g.')
 xlim([-0.318 0.318])
 ylim([-0.259 0.559])
 zlim([-0.93 0.43])

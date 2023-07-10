@@ -7,7 +7,7 @@ function [handF_total,error,xout,qTH] = simulate_force_PID(nmus,nstates,x, handF
     exF = zeros(2,1);
     
     trials = 20;
-    extra = 0;
+
            
     modelparams = load('model_struct'); 
     model = modelparams.model;
@@ -16,13 +16,13 @@ function [handF_total,error,xout,qTH] = simulate_force_PID(nmus,nstates,x, handF
     % [z,x,y]
     
     % PID Control;
-    Kpx = 80;
-    Kpy = 40;
+    Kpx = 4;
+    Kpy = 80;
     Kpz = 80;
     
-    Kix = 100;
-    Kiy = 100;
-    Kiz = 100; 
+    Kix = 300;
+    Kiy = 300;
+    Kiz = 300; 
     
     w_ref = wrist_position(x);  
     wrist_b =w_ref;
@@ -66,14 +66,7 @@ function [handF_total,error,xout,qTH] = simulate_force_PID(nmus,nstates,x, handF
    
         end
 
-
-        if any(abs(err)>0.05) && j==19 && extra<10
-            j=j-2;
-            extra = extra+1;
-        end
-        if j ==19 && singularity == false
-            disp(extra);
-            extra = 0;
+        if j ==19
             figure();
             plot_wrist_positions(xout',model,w_ref);
         end
@@ -90,14 +83,14 @@ function [handF_total,error,xout,qTH] = simulate_force_PID(nmus,nstates,x, handF
             err = [ 0.01 0.01 0.001]';
             ei = [0 0 0]';
         end
-        handF_total(j,:) = handF;
+
     
         Fx = +Kix*ei(1,1)+Kpx*err(1,1)+handF(1,:);
         Fy = +Kiy*ei(2,1)+Kpy*err(2,1)+handF(2,:);
         Fz = +Kiz*ei(3,1)+Kpz*err(3,1)+handF(3,:);
     
         handF = [Fx Fy Fz]';
-        
+        handF_total(j,:) = handF;
     end
     %point = string(ref);
     %config = [qTH' x(10,1) x(11,1)]';

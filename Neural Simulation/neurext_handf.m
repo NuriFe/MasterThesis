@@ -1,16 +1,5 @@
-function [xout,tout,uout] = neurext_handf(muscle_name, muscle,handF,x, tend, tstep,model)
-    %% Initialise variables and model
-    % Some model related variables
-    modelparams = load('model_struct'); 
-    model = modelparams.model;
-    
-    ndof = model.nDofs;
-    nmus = model.nMus;
-    nstates = 2*ndof + 2*nmus;
-    
-    % Initialize the model
-    %das3('Initialize',model);
-    
+function [xout,tout,uout] = neurext_handf(model,muscle_name, muscle,handF,x, tend, tstep)
+   
 
     if nargin > 4
         tstep = .003;
@@ -28,7 +17,16 @@ function [xout,tout,uout] = neurext_handf(muscle_name, muscle,handF,x, tend, tst
         handF = [0;0;0];
 
     end
+        %% Initialise variables and model
+    % Some model related variables
+    modelparams = load('model_struct'); 
+    model = modelparams.model;
     
+    ndof = model.nDofs;
+    nmus = model.nMus;
+    nstates = 2*ndof + 2*nmus;
+    
+
 
     % Define indices to the state variables within the state vector x
     iq = 1:ndof;
@@ -72,6 +70,7 @@ function [xout,tout,uout] = neurext_handf(muscle_name, muscle,handF,x, tend, tst
         qTHout(i+1,:)=qTH;
     
         t = t + tstep;
+        disp(t)
     
     end
 

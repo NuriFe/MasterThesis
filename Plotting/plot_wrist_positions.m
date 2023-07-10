@@ -6,7 +6,7 @@ function plot_wrist_positions(xout,model,w_ref)
     
     xrange = [-0.3 0.6];
 	yrange = [-1 0.5];
-	zrange = [-0.35 0.35];
+	zrange = [-0.45 0.45];
 
     for i = 1:size(xout,1)
             

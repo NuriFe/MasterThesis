@@ -18,16 +18,15 @@ iLce = max(iqdot) + (1:nmus);
 
 %% Insert time start, end and time step
 tstep = .003;
-tend = 3;
+tend = 1;
 t = 0;
 nsteps = round((tend-t)/tstep);
 %% Create space for variables
 
-muscle_name= 'brachialis';
-muscles = 109:1:115;
+muscle_name= 'triceps';
 %muscle_name= 'deltascap';
-%muscles = 37:1:47;
-%muscle_name= 'brachialitout = tstep*(0:nsteps)';s';
+muscles = 37:1:47;
+%muscle_name= 'brachialis'
 %muscles = 109:1:115;
 directory = 'C:\Users\s202421\Documents/GitHub/MasterThesis\DataCreation\modelpoints';
 % Get a list of .mat files in the directory
@@ -43,13 +42,12 @@ for i = 1:length(fileList)
     x = xout(:,end);
     handF_total = data.handF_total;
     handF = handF_total(end,:)';
-
     % Input Function
     u_total = stim_fun(muscles, tstep, tend);
     [fs,ers,xouts,qTHs] = simulate_force_PID(nmus,nstates,x, handF, u_total,tstep,nsteps);
-    keyboard
+    %keyboard
     filename = strrep(fileList(i).name, '.mat', '');
-    name = append('C:\Users\s202421\Documents/Github/MasterThesis\DataCreation\modelpoints/forces/',muscle_name,filename);
+    name = append('C:\Users\s202421\Documents/Github/MasterThesis\DataCreation\modelpoints/forces/triceps/',muscle_name,filename);
     save(name,'fs','ers','xouts','qTHs');
 end
 toc
