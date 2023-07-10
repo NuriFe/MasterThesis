@@ -1,4 +1,4 @@
-function plot_wrist_references(wpos,model)
+function plot_wrist_references(wpos,model,tocheck, colour)
     % Plot 3D points and join them in order
     x = wpos(:,3);
     y = wpos(:,1);
@@ -11,9 +11,20 @@ function plot_wrist_references(wpos,model)
     %figure(1);clf
     draw_ellipsoid(model)
     hold on
+    if nargin ~= 4
+        colour = 'b.';
+    end
+    plot3(x, y, z, colour, 'MarkerSize', 15);
 
+    if nargin ==3
+        w_bad = wpos(tocheck,:);
+        x_r = w_bad(:,3);
+        y_r= w_bad(:,1);
+        z_r = w_bad(:,2);
+        plot3(x_r, y_r, z_r, 'r.', 'MarkerSize', 15);
 
-    plot3(x, y, z, 'b.', 'MarkerSize', 15);
+    end
+
    
     
     axis('equal');

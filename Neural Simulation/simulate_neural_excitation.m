@@ -104,7 +104,7 @@ function [] = create_osim(ndof, model, muscle_name, x, tout, xout, mfout, qTHout
         dofnames{idof} = model.dofs{idof}.osim_name;
     end
     
-    name = append('C:\Users\s202421\Desktop\DataCreation\', muscle_name);
+    name = append('C:\Users\s202421\Documents/Github/MasterThesis\DataCreation\sto/', muscle_name);
     % Export to mat file and to opensim motion file
     save(name,'x','tout','xout', 'mfout', 'qTHout');
     make_osimm(name, dofnames, xout(:,1:ndof), tout);
