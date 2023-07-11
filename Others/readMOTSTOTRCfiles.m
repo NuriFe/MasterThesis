@@ -13,6 +13,10 @@ data = dlmread(filename, '\t',startRow,0);
 catch   
 end
  startRow = startRow + 1;
+ if startRow >20
+     warning('No file %s found',filename);
+     break;
+ end
 end
 % handles.T.data{i} = data;
 [~,nCols] = size(data);
