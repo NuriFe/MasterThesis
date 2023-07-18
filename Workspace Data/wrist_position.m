@@ -21,5 +21,5 @@ function pos = wrist_position(x)
     pos = [x y z]';
 
 
-
+    
 end

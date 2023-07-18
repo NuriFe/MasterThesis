@@ -12,9 +12,12 @@ function plot_wrist_references(wpos,model,tocheck, colour)
     draw_ellipsoid(model)
     hold on
     if nargin ~= 4
-        colour = 'b.';
+        colour = 'bo';
+        size = 1;
+    else
+        size = 15;
     end
-    plot3(x, y, z, colour, 'MarkerSize', 15);
+    plot3(x, y, z, colour, 'MarkerSize', size);
 
     if nargin ==3
         w_bad = wpos(tocheck,:);
