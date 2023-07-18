@@ -3,7 +3,7 @@
 clc
 clear
 %% Specify the directory path
-directory = 'C:\Users\s202421\Documents/GitHub/MasterThesis\DataCreation\modelpoints/forces/deltoid_scapular';
+directory = 'C:\Users\s202421\Documents\GitHub\MasterThesis\Data\static_forces';
 % Initialize the model
 modelparams = load('model_struct'); 
 model = modelparams.model;
@@ -12,18 +12,18 @@ das3('Initialize',model);
 % Get a list of .mat files in the directory
 fileList = dir(fullfile(directory, '*.mat'));
 %points
-%w_refs = create_grid(0.1);
-%muscles = 0;
+w_refs = create_grid(0.1);
+muscles = 0;
 %forces
-w_refs = [];
-name = 'deltoid_scapular';
+%w_refs = [];
+name = '';
+
 %muscles = 83:1:85; %biceps
 %muscles = 109:1:115; %brachialis
-muscles = 48:1:51;
-
+%muscles = 48:1:51;
 tocheck = [];
 %totest = [22 24 25 26 27 9]';
-%totest = [22 24 26];
+totest = [15 17 18];
 for i = 1:length(fileList)
     % Load the .mat file
     name = fileList(i).name;
@@ -32,7 +32,7 @@ for i = 1:length(fileList)
     % Extract the number using regular expressions
     number = regexp(name, '\d+', 'match');
     % Convert the extracted number to a numeric value
-    number = str2double(number);
+    number = str2double(number(1));
     %if ~ismember(number,totest)
     %    continue
     %end
@@ -41,18 +41,22 @@ for i = 1:length(fileList)
     
     % Access the error data from the loaded .mat file
     %points
-    %fs=data.handF_total; 
-    %xouts = data.xout;
-    %wref = w_refs(number,:)';
+    forces=data.forces; 
+    fs = mean(forces(end-450:end,:));
+    %fs = forces(end,:);
+    xouts = data.xout;
+    wref = w_refs(number,:)';
 
     %forces
-    fs=data.fs; 
-    xouts = data.xouts;
-    xref = xouts(:,1);
-    wref = wrist_position(xref);
-    w_refs = [w_refs wref];
+    %fs=data.forces; 
+    %xouts = data.xout;
+    %xref = xouts(1,:)';
+    %wref = wrist_position(xref);
+    %w_refs = [w_refs wref];
     %%
-    [error,xout_test] = testing(xouts, fs,wref,name,muscles,model);
+    tend = 3;
+    tstep = 0.001;
+    [error,xout_test] = testing(xouts, fs,wref,name,muscles,model, tend, tstep);
     wrist = string(wref');
     wrist_error = string(roundn(error',-3));
     
@@ -73,7 +77,7 @@ for i = 1:length(fileList)
     
 
 end
-plot_wrist_references(w_refs',model,tocheck);
+plot_wrist_references(w_refs,model,tocheck);
 
 l = string(length(fileList));
 name = append('C:\Users\s202421\Documents/Github/MasterThesis\DataCreation\points/testing',l );

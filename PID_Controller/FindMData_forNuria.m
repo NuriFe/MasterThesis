@@ -149,7 +149,7 @@ for position=1
                 
                 Fhand(i,:)=holdF;
                 % Advance simulation by a step
-                [x, xdot, step_u] = das3step_B(x, u, tstep, xdot, step_u, M, exF, handF, K+supportK, B);
+                [x, xdot, step_u] = das3step(x, u, tstep, xdot, step_u, M, exF, handF);%, K+supportK, B);
                 
                 xsave(i,:)=x;
                 usave(i,:)=u;

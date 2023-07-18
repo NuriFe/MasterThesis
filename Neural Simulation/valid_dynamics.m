@@ -1,4 +1,4 @@
-function valid = valid_dynamics(x,muscle)
+function valid = valid_dynamics(x,muscle,handF)
     valid = true;
 %% Initialise variables and model
     % Some model related variables
@@ -20,7 +20,7 @@ function valid = valid_dynamics(x,muscle)
     %% Insert time start, end and time step
     t = 0;
     tstep = .003;
-    tend = 1;
+    tend = 3;
     nsteps = round((tend-t)/tstep);
     
     %% Create space for variables
@@ -40,7 +40,9 @@ function valid = valid_dynamics(x,muscle)
     warning('error', 'MATLAB:nearlysingularMatrix');
     M = zeros(5,1);
     exF = [ 0 0]';
-    handF = [0 0 0]';
+    if nargin<2
+        handF = [0 0 0]';
+    end
     for i=1:(nsteps)
         u = stim_fun(t,muscle);
         try
@@ -64,6 +66,7 @@ function valid = valid_dynamics(x,muscle)
 
     
     end
+    plot_wrist_positions(xout,model);
 end
 
 %==========================================================

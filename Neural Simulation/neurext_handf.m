@@ -1,16 +1,16 @@
 function [xout,tout,uout] = neurext_handf(model,muscle_name, muscle,handF,x, tend, tstep)
    
 
-    if nargin > 4
+    if nargin <5
         tstep = .003;
-    elseif nargin>3
+    elseif nargin<4
         tstep = .003;
         tend = 1;
-    elseif nargin > 2
+    elseif nargin <3
         load('equilibrium.mat');
         tstep = .003;
         tend = 1;
-    elseif nargin > 1
+    elseif nargin <2
         load('equilibrium.mat');
         tstep = .003;
         tend = 1;
@@ -48,7 +48,7 @@ function [xout,tout,uout] = neurext_handf(model,muscle_name, muscle,handF,x, ten
     lengths = das3('Musclelengths',x);
     LCEopt = das3('LCEopt');
     SEEslack = das3('SEEslack');
-    x(iLce) = (lengths - SEEslack)./LCEopt;
+    x(iLce) = (lengths - SEEslack);%./LCEopt;
 
     xout(1,:) = x';
 
@@ -58,6 +58,8 @@ function [xout,tout,uout] = neurext_handf(model,muscle_name, muscle,handF,x, ten
     M = zeros(5,1);
     exF = zeros(2,1);
     %%
+    fprintf('\nSimulating...        ')
+
     for i=1:(nsteps)
         u = stim_fun(t,muscle);
         
@@ -70,9 +72,11 @@ function [xout,tout,uout] = neurext_handf(model,muscle_name, muscle,handF,x, ten
         qTHout(i+1,:)=qTH;
     
         t = t + tstep;
-        disp(t)
-    
+        display_progress(i,nsteps);
+
     end
+    
+    
 
     %plot_wrist_positions(xout,model);
     %figure()

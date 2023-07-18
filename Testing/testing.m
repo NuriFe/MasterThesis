@@ -1,8 +1,8 @@
-function [error,xout] = testing(xouts, fs,wref,name,muscles,model)
+function [error,xout] = testing(xouts, fs,wref,name,muscles,model, tend, tstep)
 
-    x = xouts(:,1);
+    x = xouts(1,:)';
     handF = fs(end,:);
-    [xout,tout,uout] = neurext_handf(model,name, muscles,handF',x,1);
+    [xout,tout,uout] = neurext_handf(model,name, muscles,handF',x,tend,tstep);
     x_final = xout(end,:)';
     w_final = wrist_position(x_final);
     error = wref-w_final;
