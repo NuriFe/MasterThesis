@@ -3,9 +3,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Initialize MATLAB
-%clear
+clear
 close all
 
+%
 tic;
 switchTime=1.5; % Check swith modulus
 
@@ -37,7 +38,7 @@ reachdist=30;
 
 
 % Select target position
-for trials=192:205
+for trials=192
     for switchTime=[1.3]
         for D=[4]%,6,100]
             display(['D = ',num2str(d),' Trial: ',num2str(trials),' SwitchTime: ',num2str(switchTime)])
@@ -57,7 +58,9 @@ for trials=192:205
                     paths=[paths pathEnd];
                 end
             else
-                paths=FindPath(d,reachdist,paths(1),paths(end));
+
+                paths=FindPath(d,reachdist,13451,2367);
+                %paths=FindPath(d,reachdist,paths(1),paths(end));
                 paths=[paths paths(end)];
             end
             paths
@@ -230,31 +233,36 @@ for trials=192:205
                             u(mus)=alpha0(j)*1;
                         end
                     end
-                    % Advance simulation by a step
-                    [x, xdot, step_u] = das3step_B(x, u, tstep, xdot, step_u, Moments, exF, handF, K, B);
-                    
-                    Fhand(i,:)=handF;
-                    usave(i,:)=u;
-                    xsave(i,:)=x;
-                    HandLocation(i,:)=Phand;
-                    JointAngles(i,:)=pose;
-                    FBForce(i,:)=Fdes;
-                    FBTorque(i,:)=FBtau;
-                    TotalTorque(i,:)=tauDes;
-                    Fkstep(i,:)=Fk;
-                    Fdstep(i,:)=Fd;
-                    Fistep(i,:)=Fi;
-                    actStep(i,:)=alpha0;
-                    GoalLocation(i,:)=HandGoal;
-                    
-                    [warnMsg, warnId] = lastwarn;
+                    try
+                        % Advance simulation by a step
+                        [x, xdot, step_u] = das3step_B(x, u, tstep, xdot, step_u, Moments, exF, handF, K, B);
+                        
+                        Fhand(i,:)=handF;
+                        usave(i,:)=u;
+                        xsave(i,:)=x;
+                        HandLocation(i,:)=Phand;
+                        JointAngles(i,:)=pose;
+                        FBForce(i,:)=Fdes;
+                        FBTorque(i,:)=FBtau;
+                        TotalTorque(i,:)=tauDes;
+                        Fkstep(i,:)=Fk;
+                        Fdstep(i,:)=Fd;
+                        Fistep(i,:)=Fi;
+                        actStep(i,:)=alpha0;
+                        GoalLocation(i,:)=HandGoal;
+                        
+                        [warnMsg, warnId] = lastwarn;
+                    catch exception
+                        warnMsg = exception.message;
+                         warnId = exception.identifier;
+                    end
+                    [warnMsg, warnId] = lastwarn;        
                     if ~isempty(warnMsg)
                         warnCount=warnCount+1;
-                        a=1;
                         break;
-                    end
+                    end 
                 end
-                if a==1 && warnCount<20
+                if  ~isempty(warnMsg)
                     count=0;
                     x=zeros(nstates,1);
                     x(1:11)=stateFeasible(:,pos);

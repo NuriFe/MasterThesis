@@ -3,7 +3,7 @@
 clc
 clear
 %% Specify the directory path
-directory = 'C:\Users\s202421\Documents\GitHub\MasterThesis\Data\static_forces';
+directory = 'C:\Users\s202421\Documents\GitHub\MasterThesis\Data\static_forces/64';
 % Initialize the model
 modelparams = load('model_struct'); 
 model = modelparams.model;
@@ -22,8 +22,9 @@ name = '';
 %muscles = 109:1:115; %brachialis
 %muscles = 48:1:51;
 tocheck = [];
+error_to_check = [];
 %totest = [22 24 25 26 27 9]';
-totest = [15 17 18];
+%totest = [15 17 18];
 for i = 1:length(fileList)
     % Load the .mat file
     name = fileList(i).name;
@@ -42,7 +43,7 @@ for i = 1:length(fileList)
     % Access the error data from the loaded .mat file
     %points
     forces=data.forces; 
-    fs = mean(forces(end-450:end,:));
+    fs = data.mean_force;
     %fs = forces(end,:);
     xouts = data.xout;
     wref = w_refs(number,:)';
@@ -67,6 +68,9 @@ for i = 1:length(fileList)
         warning(message);
         %disp(fs(end,:));
         tocheck = [tocheck number];
+        end_wrist = wrist_position(xouts(end,:)');
+        error = wref -end_wrist
+        error_to_check = [error_to_check error];
         %figure();
         %plot_wrist_positions(xout_test,model,wref)
         %title(name);

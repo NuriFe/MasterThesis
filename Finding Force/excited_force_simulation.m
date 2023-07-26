@@ -13,21 +13,27 @@ clc
 warnidx=[]; % used to record warnings from MATLAB
 
 % Load Positions
-directory = 'C:\Users\s202421\Documents\GitHub\MasterThesis\Data\static_forces';
+directory = 'C:\Users\s202421\Documents\GitHub\MasterThesis\Data\static_forces/64';
 fileList = dir(fullfile(directory, '*.mat'));
-positions = zeros(18,11);
+
+positions = zeros(length(fileList),11);
 for i = 1:length(fileList)
     % Load the .mat file
     name = fileList(i).name;
     filePath = fullfile(directory, name);
+     % Extract the number using regular expressions
+    number = regexp(name, '\d+', 'match');
+    % Convert the extracted number to a numeric value
+    number = str2double(number(1));
+
     data = load(filePath);
     config = data.arm_config;
-    positions(i,:)=config';
+    positions(number,:)=config';
 end
 warning('error', 'MATLAB:nearlysingularMatrix');
 
 %% Loop through all positions
-for j = 2:length(positions)
+for j = 1:length(positions)
     position = positions(j,:);
 
     % Initiliaze variables
@@ -161,7 +167,7 @@ for j = 2:length(positions)
         cut = round(length(forces)*0.9);
         mean_force=mean(forces(cut:end,:));
 
-        save(['C:\Users\s202421\Documents\GitHub/MasterThesis/Data/forces/PID/',num2str(j),'_',num2str(muscle),'.mat'],'xout','forces','x', 'handF', "armTorque");
+        save(['C:\Users\s202421\Documents\GitHub/MasterThesis/Data/forces/64/',num2str(j),'_',num2str(muscle),'.mat'],'xout','forces','x', 'mean_force', "armTorque");
 
     end
 end

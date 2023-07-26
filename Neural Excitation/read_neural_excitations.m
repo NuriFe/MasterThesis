@@ -1,12 +1,12 @@
 function read_neural_excitations(points)
     % Read STO data
-    for i=1:points
+    for i=1
         try
             number = int2str(i);
-            %path =  strcat('C:\Users\s202421\Documents\GitHub\MasterThesis\OpenSim/point',number,'/');
-            %file = strcat('point',number,'_states.sto');
-            path = 'C:\Users\s202421\Desktop\test/';
-            file = 'DAS3_states.sto';
+            path =  strcat('C:\Users\s202421\Documents\GitHub\MasterThesis\OpenSim/point',number,'/');
+            file = strcat('point',number,'_states.sto');
+            %path = 'C:\Users\s202421\Documents\GitHub\MasterThesis\DataCreation\sto/';
+            %file = '6.mat.sto';
 
             [data,C,tableData] =  readMOTSTOTRCfiles(path,file);
             fprintf('Read sto %s \n ', file)
@@ -33,10 +33,10 @@ function read_neural_excitations(points)
 
             [time, xout] = clean_time_data(time, xout);
             plot_neurexct(time,xout);
-            [time, xout] = fill_in_data(time, xout);
+            %[time, xout] = fill_in_data(time, xout);
     
             %name = append('C:\Users\s202421\Documents/Github/MasterThesis\DataCreation\modelpoints/neuralexcitations/',number );
-            name = append('C:\Users\s202421\Desktop\test/output',number);
+            name = append('C:\Users\s202421\Documents\GitHub\MasterThesis\DataCreation\excitations',number);
             % Export to mat file and to opensim motion file
             save(name,'x_end','xout','time');
             fprintf('Saved cleaned data  %s \n ', file)

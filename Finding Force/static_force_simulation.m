@@ -13,10 +13,12 @@ clc
 warnidx=[]; % used to record warnings from MATLAB
 
 % Load Positions
-w_refs = create_grid(0.1,model);
+w_refs = create_grid(0,model);
 
 % To repeat after testing
 repeat = [];
+warning('error', 'MATLAB:nearlysingularMatrix');
+
 %% Loop through all positions
 for j = 1:length(w_refs)
     %position = positions(i,:);
@@ -105,16 +107,21 @@ for j = 1:length(w_refs)
                 %PID calculation for time step
                 %handF= K*error_pos+I*error_int;-B*Vhand;
                 % Advance simulation by a step
-                [x, xdot, step_u] = das3step(x, u, tstep, xdot, step_u, M, exF, handF);
+                try
+                    [x, xdot, step_u] = das3step(x, u, tstep, xdot, step_u, M, exF, handF);
                 
-                % Save data
-                forces(i,:)= handF;
-                xout(i,:)=x;
-                uout(i,:)=u;
-                armTorque(i,:)=das3('Jointmoments',x);
-                
-                % Update if warning Message Exist
-                [warnMsg, warnId] = lastwarn;
+                    % Save data
+                    forces(i,:)= handF;
+                    xout(i,:)=x;
+                    uout(i,:)=u;
+                    armTorque(i,:)=das3('Jointmoments',x);
+                    [warnMsg, warnId] = lastwarn;
+
+                catch exception
+                     warnMsg = exception.message;
+                     warnId = exception.identifier;                    
+                end
+
                 if ~isempty(warnMsg)
                     warnCount=warnCount+1;
                     break;
@@ -152,7 +159,7 @@ for j = 1:length(w_refs)
             repeat = [repeat j];
         else
             arm_config = x(1:11,1);
-            save(['C:\Users\s202421\Documents\GitHub/MasterThesis/Data/static_forces/PID/',num2str(j),'_',num2str(muscle),'.mat'],'xout','forces','x','arm_config','mean_force');
+            save(['C:\Users\s202421\Documents\GitHub/MasterThesis/Data/static_forces/64/',num2str(j),'_',num2str(muscle),'.mat'],'xout','forces','x','arm_config','mean_force');
         end
 
         

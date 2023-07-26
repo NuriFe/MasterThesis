@@ -1,4 +1,4 @@
-function muscles=whichMuscles(muscle)
+function muscles=whichMuscle(muscle)
 
 switch muscle
     case 1 % triceps
