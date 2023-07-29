@@ -21,5 +21,7 @@ switch muscle
         muscles=[102:103];
     case 10 % static
         muscles=[];
+    case 11
+        muscles=[37:47]; %anterior deltoid
 end
 

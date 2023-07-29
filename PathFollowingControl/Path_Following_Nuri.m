@@ -26,7 +26,7 @@ totry(not_good) = [];
 %Load feasible points
 load('feasiblepoints.mat') %MFM feasible, state feasible, wrist feasible, torque feasible
 
-
+totry = totry(1,:);
 for idx = 1:length(totry)
     endPos = totry(idx);
     % Find Best Path using KNN
@@ -82,7 +82,8 @@ for idx = 1:length(totry)
     Fistep=zeros(nsteps,3);
     actStep=zeros(nsteps,9);
     GoalLocation=zeros(nsteps,3);
-
+    
+    MuscleForces = zeros(nsteps,9);
     % Initialize parameters
     u=zeros(nmus,1);
     handF=[0;0;0];
@@ -121,7 +122,7 @@ for idx = 1:length(totry)
             % If the hand has reached close to the Goal Pose change
             % position in path.
             % If not continue trying to reach the same point.
-            if distance < 0.03 || trial >3 
+            if distance < 0.03 || trial >2 
                 if pathIdx < length(paths)
                     pathIdx=pathIdx+1;
                     fprintf("New point %s \n", string(pathIdx))
@@ -190,13 +191,26 @@ for idx = 1:length(totry)
 
         % Compute desired torque
         tau_des = tau_feedback + staticTorque';
-
-        % Time to switch activation
+        
+        stroke = 10;
+        % Time to switch activation and add the stroke function
         if mod(i,25)==0
             alpha0=computeActivations(MFM,tau_des,alpha0);
             for j=1:9
                 mus=whichMuscles(j);
+                if j == 5
+                    alpha0(j)= alpha0(j)*(stroke); %biceps overactivity
+                    if alpha0(j) >1
+                        alpha0(j) = 1;
+                    elseif alpha0(j) == 0 && stroke >1
+                        alpha0(j)= 0.3;
+                    end
+                elseif (j == 1 || j == 2) && stroke >1
+                    alpha0(j) = alpha0(j)/stroke/2;
+
+                end
                 u(mus)=alpha0(j)*1;
+
             end
         end
         
@@ -215,6 +229,16 @@ for idx = 1:length(totry)
             Fistep(i,:)=Fi;
             actStep(i,:)=alpha0;
             GoalLocation(i,:)=HandGoal;
+
+            force = das3('Muscleforces', x);
+            forces = zeros(9,1);
+            for j=1:9
+                mus=whichMuscles(j);
+                frc = force(mus);
+                forces(j) = mean(frc);
+            end
+            MuscleForces(i,:)= forces';
+
         catch exception
              warnMsg = exception.message;
              warnId = exception.identifier;
@@ -224,6 +248,22 @@ for idx = 1:length(totry)
             warnCount=warnCount+1;
             break;
         end 
+        
+        % Read Neural Excitation
+        triceps_indx = whichMuscles(1);
+        triceps = u(triceps_indx);
+        ant_deltoids_indx = whichMuscles(11);
+        ant_deltoids = u(ant_deltoids_indx);
+
+        %% PD Controller
+        % Hand error and derivative
+        error = HandGoal - Phand;
+        [dPhand_dx, Phand] = pos_jacobian(x,model);
+        Vhand=dPhand_dx*x(12:22);hand=dPhand_dx*x(12:22);
+        
+        % Force
+
+    
 
     end
 
@@ -234,14 +274,15 @@ for idx = 1:length(totry)
         x(iLce)=-3+6*rand(nmus,1); % randomly select initial Lce
     else
         complete=1;
-        %plot_wrist_positions(xsave(1:i-1,:),model,HandGoal)
-        %hold on
-        %wrists =  wristFeasible(paths,:);
-        %plot_wrist_references(wrists,model);
-        %view(-90,90);
-        %hold off
+        plot_wrist_positions(xsave(1:i-1,:),model,HandGoal)
+        hold on
+        wrists =  wristFeasible(paths,:);
+        plot_wrist_references(wrists,model);
+        view(-90,90);
+        hold off
     end
-    error = HandGoal-Phand
+    error = HandGoal-Phand;
+
 
     %trim to save
     usave = usave(1:i,:);
@@ -255,9 +296,22 @@ for idx = 1:length(totry)
     Fistep = Fistep(1:i,:);
     GoalLocation = GoalLocation(1:i,:);
     tsave=tstep*(0:i-1);
+    
+    figure()
+    subplot(1,2,1)
+    plot(tsave(100:i),MuscleForces(100:i,[1 2 5]))
+    legend('triceps', 'deltoids', 'biceps')
+    subplot(1,2,2)
+    plot(tsave(100:i),actStep(100:i,[1 2 5]))
+    legend('triceps', 'deltoids', 'biceps')
 
-    filename = ['C:\Users\s202421\Documents\GitHub\MasterThesis\Data\neural_excitation/','Point_', num2str(endPos)];
-    save(filename,'usave','xsave','tsave','HandLocation','GoalLocation','Fkstep','Fistep','FBForce','FBTorque','TotalTorque','actStep')
+
+    error = HanGoal-Phand;
+    
+
+
+    %filename = ['C:\Users\s202421\Documents\GitHub\MasterThesis\Data\neural_excitation/','Point_', num2str(endPos)];
+    %save(filename,'usave','xsave','tsave','HandLocation','GoalLocation','Fkstep','Fistep','FBForce','FBTorque','TotalTorque','actStep')
 
 
     end
