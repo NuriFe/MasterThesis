@@ -3,7 +3,7 @@
 clc
 clear
 %% Specify the directory path
-directory = 'C:\Users\s202421\Documents\GitHub\MasterThesis\Data\static_forces/64';
+directory = 'C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\Static Forces';
 % Initialize the model
 modelparams = load('model_struct'); 
 model = modelparams.model;
@@ -84,5 +84,5 @@ end
 plot_wrist_references(w_refs,model,tocheck);
 
 l = string(length(fileList));
-name = append('C:\Users\s202421\Documents/Github/MasterThesis\DataCreation\points/testing',l );
-save(l,'directory','w_refs','tocheck');
+name = append('C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\Static Forces/Testing/',l );
+save(name,'directory','w_refs','tocheck');
