@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<OpenSimDocument Version="20302">
+  <ForceSet name="arm26">
+    <defaults />
+    <objects>
+      <CoordinateActuator name="SC_y_reserve">
+        <isDisabled>false</isDisabled>
+        <min_control>-infinity</min_control>
+        <max_control>infinity</max_control>
+        <coordinate>SC_y</coordinate>
+        <optimal_force>1.00000000</optimal_force>
+      </CoordinateActuator>
+      <CoordinateActuator name="SC_z_reserve">
+        <isDisabled>false</isDisabled>
+        <min_control>-infinity</min_control>
+        <max_control>infinity</max_control>
+        <coordinate>SC_z</coordinate>
+        <optimal_force>1.00000000</optimal_force>
+      </CoordinateActuator>
+      <CoordinateActuator name="SC_x_reserve">
+        <isDisabled>false</isDisabled>
+        <min_control>-infinity</min_control>
+        <max_control>infinity</max_control>
+        <coordinate>SC_x</coordinate>
+        <optimal_force>1.00000000</optimal_force>
+      </CoordinateActuator>
+      <CoordinateActuator name="AC_y_reserve">
+        <isDisabled>false</isDisabled>
+        <min_control>-infinity</min_control>
+        <max_control>infinity</max_control>
+        <coordinate>AC_y</coordinate>
+        <optimal_force>1.00000000</optimal_force>
+      </CoordinateActuator>
+      <CoordinateActuator name="AC_z_reserve">
+        <isDisabled>false</isDisabled>
+        <min_control>-infinity</min_control>
+        <max_control>infinity</max_control>
+        <coordinate>AC_z</coordinate>
+        <optimal_force>1.00000000</optimal_force>
+      </CoordinateActuator>
+      <CoordinateActuator name="AC_x_reserve">
+        <isDisabled>false</isDisabled>
+        <min_control>-infinity</min_control>
+        <max_control>infinity</max_control>
+        <coordinate>AC_x</coordinate>
+        <optimal_force>1.00000000</optimal_force>
+      </CoordinateActuator>
+      <CoordinateActuator name="GH_y_reserve">
+        <isDisabled>false</isDisabled>
+        <min_control>-infinity</min_control>
+        <max_control>infinity</max_control>
+        <coordinate>GH_y</coordinate>
+        <optimal_force>1.00000000</optimal_force>
+      </CoordinateActuator>
+      <CoordinateActuator name="GH_z_reserve">
+        <isDisabled>false</isDisabled>
+        <min_control>-infinity</min_control>
+        <max_control>infinity</max_control>
+        <coordinate>GH_z</coordinate>
+        <optimal_force>1.00000000</optimal_force>
+      </CoordinateActuator>
+      <CoordinateActuator name="GH_yy_reserve">
+        <isDisabled>false</isDisabled>
+        <min_control>-infinity</min_control>
+        <max_control>infinity</max_control>
+        <coordinate>GH_yy</coordinate>
+        <optimal_force>1.00000000</optimal_force>
+      </CoordinateActuator>
+      <CoordinateActuator name="EL_x_reserve">
+        <isDisabled>false</isDisabled>
+        <min_control>-infinity</min_control>
+        <max_control>infinity</max_control>
+        <coordinate>EL_x</coordinate>
+        <optimal_force>1.00000000</optimal_force>
+      </CoordinateActuator>
+      <CoordinateActuator name="PS_y_reserve">
+        <isDisabled>false</isDisabled>
+        <min_control>-infinity</min_control>
+        <max_control>infinity</max_control>
+        <coordinate>PS_y</coordinate>
+        <optimal_force>1.00000000</optimal_force>
+      </CoordinateActuator>
+    </objects>
+    <groups />
+  </ForceSet>
+</OpenSimDocument>
