@@ -15,7 +15,7 @@
 clear all
 close all
 
-load('C:\Users\s202421\Documents\GitHub\MasterThesis\Data\torques/data64.mat')
+load('C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\Static Torques/data64.mat')
 
 % prior parameters and covariance
 params1 = zeros(1,2);

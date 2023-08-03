@@ -12,12 +12,13 @@ function das3stick(x, model, options)
 	if nargin < 3 || ~isfield(options,'box')
 		options.box = 1;
 	end
-	if nargin < 3 || ~isfield(options,'axes')
+	if nargin < 3 ||~isfield(options,'box')
 		options.axes = 1;
 	end
     if nargin < 3 || ~isfield(options,'keepview')
         options.keepview = 0;
     end
+    options.keepview=0;
 	    
     % radii of thorax ellipsoid 
 	Ax  = model.thorax_radii(1);
@@ -123,11 +124,13 @@ function das3stick(x, model, options)
 			box on
 		end
 		if (~options.keepview)
-			view(157, 6);
+			view(-157, 6);
 		end
 		if (~options.axes)
 			axis off
-		end
+        end
+        view(290, 15);
+
 	end
 	
 	hold off;

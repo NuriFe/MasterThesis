@@ -35,6 +35,7 @@ warning('error', 'MATLAB:nearlysingularMatrix');
 
 %% Loop through all positions
 for j = 1:length(positions)
+    j = 10;
     position = positions(j,:);
 
     % Initiliaze variables
@@ -56,7 +57,7 @@ for j = 1:length(positions)
                        
             % Set simulation parameters
             t = 0;
-            tend = 0.5;
+            tend = 2;
             tstep = .001; %default = .003 
             nsteps = round((tend-t)/tstep)+1; % +1 allows for saving of initial state
            
@@ -65,7 +66,7 @@ for j = 1:length(positions)
             step_u = zeros(nmus,1);
 
             % Create space for saving variables
-            tout = tstep*(0:nsteps)';
+            tout =0:tstep:tend;
             forces = zeros(nsteps,3);
             xout = zeros(nsteps,nstates);
             uout = zeros(nsteps,nmus);
@@ -83,7 +84,7 @@ for j = 1:length(positions)
 
             % Save starting point
             xout(1,:)=x;
-            uout(1,:)=zeros(nmus,1);
+            %uout(1,:)=zeros(nmus,1);
             armTorque(1,:)=das3('Jointmoments',x);
 
             fprintf('\nSimulating...        ')
@@ -117,7 +118,15 @@ for j = 1:length(positions)
                 handF = K*error_pos+I*error_int;
 
                 %PID calculation for time step
-                handF= K*error_pos+I*error_int -B*Vhand;
+                %handF= K*error_pos+I*error_int -B*Vhand;
+                
+                % Arm Support
+                % [dPhand_dx, Phand] = pos_jacobian(x,model);
+                % supportEq=[0;0.3;-0.15];
+                % K=diag([0 30 30]);
+                % B=diag([120 120 120]);
+                % Vhand=dPhand_dx*x(12:22);
+                % handF=handF-K*(Phand-supportEq)-B*Vhand;
 
                 try
                     % Advance simulation by a step
@@ -167,9 +176,9 @@ for j = 1:length(positions)
 
         cut = round(length(forces)*0.9);
         mean_force=mean(forces(cut:end,:));
-
+        plot_multiple(xout,uout,forces,tstep,tend,tout,hand_goal,model)
         save(['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\Stimulated Forces/',num2str(j),'_',num2str(muscle),'.mat'],'xout','forces','x', 'mean_force', "armTorque");
-
+        close all;
     end
 end
 

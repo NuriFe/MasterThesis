@@ -12,8 +12,8 @@ function plot_wrist_references(wpos,model,tocheck, colour)
     draw_ellipsoid(model)
     hold on
     if nargin ~= 4
-        colour = 'bo';
-        size = 1;
+        colour = 'b.';
+        size = 10;
     else
         size = 15;
     end

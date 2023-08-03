@@ -90,9 +90,9 @@ hsimplePred1 = plot(simplePred1,'r--');
 legend([htSIMPLET1 hsimplePred1],'actual','predicted')
 title([joint,' torque'])
 ylabel('torque (N-m)')
-saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\Data\modelfigures/',joint,'Parametric.jpg'])
-saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\Data\modelfigures/',joint,'Parametric.fig'])
-saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\Data\modelfigures/',joint,'Parametric.eps'],'epsc')
+saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/Data\modelfigures/',joint,'Parametric.jpg'])
+saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\modelfigures/',joint,'Parametric.fig'])
+saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\modelfigures/',joint,'Parametric.eps'],'epsc')
 hold off
 
 % build the structure of variables to save

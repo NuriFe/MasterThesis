@@ -88,10 +88,10 @@ end
 
 % draw each point
 hold on
-%plot3(global_points(:, 3), global_points(:, 1), global_points(:, 2), 'o-', 'LineWidth', 2, 'MarkerSize', 8);
+plot3(global_points(:, 3), global_points(:, 1), global_points(:, 2), 'o-', 'LineWidth', 2, 'MarkerSize',2);
 h = zeros(3,1);
 for i=1:13
-    plot3(global_points(i, 3), global_points(i, 1), global_points(i, 2), 'o-', 'LineWidth', 2, 'MarkerSize', 8);
+    plot3(global_points(i, 3), global_points(i, 1), global_points(i, 2), 'bo-', 'LineWidth', 2, 'MarkerSize', 1);
 
     h(1) = quiver3(global_points(i, 3), global_points(i, 1), global_points(i, 2), r11(i, 1), r11(i, 2), r11(i, 3), 'c','LineWidth', 1);
     h(2) = quiver3(global_points(i, 3), global_points(i, 1), global_points(i, 2), r12(i, 1), r12(i, 2), r12(i, 3), 'r','LineWidth', 1);

@@ -15,8 +15,9 @@
 clear all
 close all
 
-load('sampleData')
-
+%load('sampleData')
+load('C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\Static Torques/data64.mat')
+sampleData = data_for_model;
 % prior parameters and covariance
 params1 = zeros(1,2);
 params2 = zeros(1,2);

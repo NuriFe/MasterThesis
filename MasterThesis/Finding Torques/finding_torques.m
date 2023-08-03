@@ -3,7 +3,7 @@
 clc
 clear
 %% Specify the directory path
-directory = 'C:\Users\s202421\Documents\GitHub\MasterThesis\Data\forces\64';
+directory = 'C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\Static Forces';
 % Get a list of .mat files in the directory
 fileList = dir(fullfile(directory, '*.mat'));
 
@@ -69,24 +69,20 @@ for i = 1:length(fileList)
         pose=[qTH;x(10:11)];
         wp = wrist_position(x);
     
-        [dPhand_dx, ~, ~] = handpos_jacobian(x);
-        torque = dPhand_dx'*hand_F;
-        torque_5 = [torque(1:3,:); torque(10:11,:)];
+        %[dPhand_dx, ~, ~] = handpos_jacobian(x);
+        %torque = dPhand_dx'*hand_F;
+        %torque_5 = [torque(1:3,:); torque(10:11,:)];
+        J = kinematic_jacobian(x);
+        torque = J'*hand_F;
         %muscle_torque = torques4(:,number)-torque_5;
-        muscle_torque = torque_5; 
-        if number == 1
-            torques(:,muscles-j)=torque_5;
-            configs(:,muscles-j)=pose;
-            wps(:,muscles-j)=wp;
-            w_forces(:,muscles-j)=hand_F;
+        %muscle_torque = torque_5; 
+        
 
-        else
-            torques(:,number*muscles-j)=torque_5;
-            configs(:,number*muscles-j)=pose;
-            wps(:,number*muscles-j)=wp;
-            w_forces(:,number*muscles-j)=hand_F;
+        torques(:,number*muscles-j)=torque;
+        configs(:,number*muscles-j)=pose;
+        wps(:,number*muscles-j)=wp;
+        w_forces(:,number*muscles-j)=hand_F;
 
-        end
         j = j-1;
     else
         torques(:,number*muscles-j)=torques4(:,number);
@@ -116,11 +112,11 @@ for i=1:muscles
     data_for_model(i).wristposition = wps_i';
     data_for_model(i).wristforces = w_forces_i';
 
-    name = append('C:\Users\s202421\Documents\GitHub\MasterThesis\Data/torques/64/',string(i) );
-    save(name,'torques_i','configs_i','wps_i', 'w_forces_i');
+    %name = append('C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\Static Torques/',string(i) );
+    %save(name,'torques_i','configs_i','wps_i', 'w_forces_i');
 
 end
-name = append('C:\Users\s202421\Documents\GitHub\MasterThesis\Data/torques/data64.mat' );
+name = append('C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\Static Torques/data64.mat' );
 save(name,'data_for_model');
 
 fprintf('Data saved for torques')

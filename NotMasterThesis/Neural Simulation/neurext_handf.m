@@ -72,7 +72,7 @@ function [xout,tout,uout] = neurext_handf(model,muscle_name, muscle,handF,x, ten
         qTHout(i+1,:)=qTH;
     
         t = t + tstep;
-        display_progress(i,nsteps);
+        %display_progress(i,nsteps);
 
     end
     

@@ -118,9 +118,9 @@ hmSIMPLET1 = plot(mSIMPLET1,'r--');
 %legend([htSIMPLET1 hmSIMPLET1 hmSIMPLET4 hmSIMPLET5],'actual','predicted','GP','LM')
 title([joint,' torque'])
 ylabel('torque (N-m)')
-saveas(h5,['C:\Users\s202421\Documents\GitHub\MasterThesis\Data\modelfigures/',joint,'Semiparametric.jpg'])
-saveas(h5,['C:\Users\s202421\Documents\GitHub\MasterThesis\Data\modelfigures/',joint,'Semiparametric.fig'])
-saveas(h5,['C:\Users\s202421\Documents\GitHub\MasterThesis\Data\modelfigures/',joint,'Semiparametric.eps'],'epsc')
+saveas(h5,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\modelfigures/',joint,'Semiparametric.jpg'])
+saveas(h5,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\modelfigures/',joint,'Semiparametric.fig'])
+saveas(h5,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\modelfigures/',joint,'Semiparametric.eps'],'epsc')
 hold off
 
 % build the structure of variables to save
