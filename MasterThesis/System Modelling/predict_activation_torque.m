@@ -1,9 +1,11 @@
-function [R] = predict_activation_torque(q)
-    muscles = 4;
+function [R] = predict_activation_torque(q,model)
+    muscles = 8;
     % load model filename
-    load('C:\Users\s202421\Documents\GitHub\MasterThesis\Data\model\model64.mat')
+    if nargin ==1
+        load('C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\model64.mat')
+    end
     covGP = {@covSEard};
-    torque = zeros(4,3);
+    R = zeros(4,muscles);
     static_torque = zeros(4,1);
     for i = 1:muscles
         covSIMPLE1 = {@cov1};
@@ -22,12 +24,10 @@ function [R] = predict_activation_torque(q)
         covfunc4 = {'covSum',{covGP,covSIMPLE4}}; 
         t(4) = gp(modeldata.muscle(i).elbowflexion.semiparametric.gpHyperparameters, @infExact, @mean4, covfunc4, @likGauss, modeldata.muscle(i).elbowflexion.semiparametric.trainingInputs, modeldata.muscle(i).elbowflexion.semiparametric.trainingOutputs, q);
         
-        if i == 4
-            static_torque = t';
-        else
-            torque(:,i)=t';
-        end
+
+        R(:,i)=t';
+        
     end
     
-    R = static_torque - torque;
+    R;
 end

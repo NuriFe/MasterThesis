@@ -1,10 +1,10 @@
-function act  = computeActivations(M,tau,alpha0)
+function act  = computeActivation_Nuri(M,tau,alpha0)
 
 
 % solve Malpha=tau for alpha
 
     x=alpha0;
-    Bk=eye(3);
+    Bk=eye(8);
     func=@penaltyFunc;
     [f,g]=func(x,M,tau);
     
@@ -19,7 +19,7 @@ function act  = computeActivations(M,tau,alpha0)
         [f,g]=func(x,M,tau);
         yk=g-gold;
         rho=1/(yk'*sk);
-        Bk=(eye(3)-rho*sk*yk')*Bk*(eye(3)-rho*yk*sk')+rho*sk*sk';
+        Bk=(eye(8)-rho*sk*yk')*Bk*(eye(8)-rho*yk*sk')+rho*sk*sk';
         it=it+1;
     end
     for j=1:length(x)
@@ -68,7 +68,7 @@ f=norm(x)^2+c*norm(M*x-tau)^2+c2*K;
 
 if nargout>1
     % Define gradient
-    K=zeros(3,1);
+    K=zeros(8,1);
     for i=1:length(x)
         if x(i)<0
             K(i)=2*x(i);

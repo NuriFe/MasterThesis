@@ -30,7 +30,7 @@ function plot_wrist_positions(xout,model,w_ref)
         draw_arm(xout(1,:)',model);
         draw_arm(xout(end,:)',model);
         if nargin>2;
-           plot3(w_ref(3), w_ref(1), w_ref(2), 'bo', 'LineWidth', 1.5, 'MarkerSize', 4);
+           plot3(w_ref(3), w_ref(1), w_ref(2), 'bo', 'LineWidth', 1.5, 'MarkerSize', 6);
     end
         % set the axes and viewpoint
     axis('equal');

@@ -1,4 +1,4 @@
-function semiStruct = semiparametricfunctionReach(joint,trainingInputs,trainingOutputs,testInputs,testOutputs,B1,b1)
+function semiStruct = semiparametricfunctionReach(muscle,joint,trainingInputs,trainingOutputs,testInputs,testOutputs,B1,b1)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % SEMIPARAMETRICFUNCTION.M
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
@@ -116,11 +116,11 @@ hmSIMPLET1 = plot(mSIMPLET1,'r--');
 %hmSIMPLET4 = plot(GPpart,'c');
 %hmSIMPLET5 = plot(linearModel,'k');
 %legend([htSIMPLET1 hmSIMPLET1 hmSIMPLET4 hmSIMPLET5],'actual','predicted','GP','LM')
-title([joint,' torque'])
+title([joint,' Muscle:',muscle])
 ylabel('torque (N-m)')
-saveas(h5,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\modelfigures/',joint,'Semiparametric.jpg'])
-saveas(h5,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\modelfigures/',joint,'Semiparametric.fig'])
-saveas(h5,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\modelfigures/',joint,'Semiparametric.eps'],'epsc')
+saveas(h5,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/Data\modelfigures/',joint,'_', muscle, 'Semiparametric.jpg'])
+saveas(h5,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\modelfigures/',joint,'_', muscle,'Semiparametric.fig'])
+saveas(h5,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\modelfigures/',joint,'_', muscle,'Semiparametric.eps'],'epsc')
 hold off
 
 % build the structure of variables to save

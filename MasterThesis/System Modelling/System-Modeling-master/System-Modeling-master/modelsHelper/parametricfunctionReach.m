@@ -1,4 +1,4 @@
-function paraStruct = parametricfunctionReach(joint,trainingInputs,trainingOutputs,testInputs,testOutputs,Bprior,bprior)
+function paraStruct = parametricfunctionReach(muscle, joint,trainingInputs,trainingOutputs,testInputs,testOutputs,Bprior,bprior)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % PARAMETRICFUNCTION.M
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
@@ -88,11 +88,11 @@ hv = fill([z'; flipdim(z',1)],[simplePred1+2*sqrt(simpleVar1);flipdim(simplePred
 htSIMPLET1 =plot(testOutputs(:,1),'b','LineWidth',2);
 hsimplePred1 = plot(simplePred1,'r--');
 legend([htSIMPLET1 hsimplePred1],'actual','predicted')
-title([joint,' torque'])
+title([joint,' Muscle:',muscle])
 ylabel('torque (N-m)')
-saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/Data\modelfigures/',joint,'Parametric.jpg'])
-saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\modelfigures/',joint,'Parametric.fig'])
-saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\modelfigures/',joint,'Parametric.eps'],'epsc')
+saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/Data\modelfigures/',joint,'_', muscle, 'Parametric.jpg'])
+saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\modelfigures/',joint,'_', muscle,'Parametric.fig'])
+saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\modelfigures/',joint,'_', muscle,'Parametric.eps'],'epsc')
 hold off
 
 % build the structure of variables to save

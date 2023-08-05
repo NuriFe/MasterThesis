@@ -1,10 +1,10 @@
 clear
 clc
 close all
-directory = 'C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/Data\Stimulated Forces';
+directory = 'C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/Data\Static Forces';
 fileList = dir(fullfile(directory, '*.mat'));
 [model, nstates, ndof, nmus, iLce] = initialize_model();
-muscle = 1;
+muscle = 10;
 for i = muscle:10:length(fileList)
     name = fileList(i).name;
     filePath = fullfile(directory, name);

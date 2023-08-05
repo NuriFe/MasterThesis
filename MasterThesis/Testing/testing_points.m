@@ -4,13 +4,13 @@ clc
 clear
 close all
 %% Specify the directory path
-directory = 'C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\Stimulated Forces';
+directory = 'C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\Static Forces';
 
 % Get a list of .mat files in the directory
 fileList = dir(fullfile(directory, '*.mat'));
 %points
 %w_refs = create_grid(0.1);
-muscle = 1;
+muscle = 10;
 %forces
 w_refs = [];
 name = '';
@@ -41,12 +41,12 @@ for i = 1:length(fileList)
     forces=data.forces; 
     fs = data.mean_force;
     xouts = data.xout;
-    xref = xouts(1,:)';
+    xref = data.x;
     wref = wrist_position(xref);
     w_refs = [w_refs wref];
 
     %%
-    tend = 2;
+    tend = 3;
     tstep = 0.001;
     [error,xout_test] = testing(xouts, fs,wref,muscle, tend, tstep);
     wrist = string(wref');
@@ -55,8 +55,8 @@ for i = 1:length(fileList)
     message = sprintf('Data for w_ref %s x:%s+%s y:%s+%s z:%s+%s\n ', ...
         string(number),wrist(1,1), wrist_error(1,1), wrist(1,2), wrist_error(1,2), wrist(1,3), wrist_error(1,3));
     
-    if any(abs(error)>0.04)
-        %warning(message);
+    if any(abs(error)>0.05)
+        warning(message);
         %disp(fs(end,:));
         tocheck = [tocheck number];
         error_to_check = [error_to_check wrist_error];

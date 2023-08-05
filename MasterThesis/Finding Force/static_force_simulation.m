@@ -4,7 +4,7 @@
 
 
 clear
-close all
+%close all
 clc
 
 % Initialize DAS model
@@ -103,6 +103,13 @@ for j = 1:length(w_refs)
 
                 % PI calculation for time step
                 handF = K*error_pos+I*error_int;
+
+                [dPhand_dx, Phand] = pos_jacobian(x,model);
+                supportEq=[0;0.3;-0.15];
+                K=diag([0 30 30]);
+                B=diag([120 120 120]);
+                Vhand=dPhand_dx*x(12:22);
+                handF=handF-K*(Phand-supportEq)-B*Vhand;
                 
                 %PID calculation for time step
                 %handF= K*error_pos+I*error_int;-B*Vhand;
@@ -153,6 +160,7 @@ for j = 1:length(w_refs)
         %end
         cut = round(length(forces)*0.9);
         mean_force=mean(forces(cut:end,:));
+        %plot_multiple(xout,uout,forces,tstep,tend,tout,hand_goal,model)
 
         %wrist_error = test(xout,mean_force,hand_goal,model,tend,tstep);
         if any(abs(error_pos)>0.05)

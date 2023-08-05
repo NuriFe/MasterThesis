@@ -10,9 +10,10 @@ cols = 3;
 cell_array = {};
 to_check = [];
 muscle_to_check = [];
-for i = 1:10:length(fileList)
-
-    for j = 1:min(10, length(fileList) - i + 1)
+muscles = 9;
+for i = 1:muscles:length(fileList)
+    
+    for j = 1:min(muscles, length(fileList) - i + 1)
         % Load the .mat file
         name = fileList(i + j - 1).name;
         filePath = fullfile(directory, name);
@@ -36,7 +37,7 @@ for i = 1:10:length(fileList)
             to_check = [to_check str2double(number(1))];
             muscle_to_check = [muscle_to_check str2double((number(2)))];
             
-            %ext(1.5, 0.5, num2str(error), 'Color', 'red');
+            plot_wrist_positions(xout, model)
         else
             
             %text(1.5, 0.5, num2str(error));

@@ -23,7 +23,7 @@ function [error,xout] = testing(xouts, fs,wref,muscle, tend, tstep)
 
             % Set start and goal hand positions
             hand_start = wrist_position(x)';
-            hand_goal = hand_start';
+            hand_goal = wref;
 
             % Set initial force hand
             handF = fs';
@@ -61,25 +61,20 @@ function [error,xout] = testing(xouts, fs,wref,muscle, tend, tstep)
                 % 
                 % % PI calculation for time step
                 % handF = K*error_pos+I*error_int;
+
                 % Arm Support
                 [dPhand_dx, Phand] = pos_jacobian(x,model);
                 supportEq=[0;0.3;-0.15];
                 K=diag([0 30 30]);
                 B=diag([120 120 120]);
                 Vhand=dPhand_dx*x(12:22);
-                handF=-K*(Phand-supportEq)-B*Vhand;
-                
-                holdTime=166;
-                if i<holdTime
-                    Khold=eye(3)*2000;
-                    Bhold=eye(3)*200;
-                    holdF=-Khold*(Phand-hand_start')-Bhold*Vhand;
-                    handF=handF+holdF;
-                    
-                    K=K+Khold;
-                    B=B+Bhold;
-                else
+                hands=-K*(Phand-supportEq)-B*Vhand;
 
+                holdTime=300;
+                if i<holdTime
+                    handF = hands;                
+                else
+                    handF = fs'+hands;
                 end
                 forces(1,:) = handF;
 
@@ -114,7 +109,7 @@ function [error,xout] = testing(xouts, fs,wref,muscle, tend, tstep)
                 complete=1;
             end
 
-            plot_multiple(xout,uout,forces,tstep,tend,tout,hand_goal,model)
+            %plot_multiple(xout,uout,forces,tstep,tend,tout,wref,model)
 
 
 
