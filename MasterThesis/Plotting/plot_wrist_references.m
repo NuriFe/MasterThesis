@@ -24,7 +24,7 @@ function plot_wrist_references(wpos,model,tocheck, colour)
         x_r = w_bad(:,3);
         y_r= w_bad(:,1);
         z_r = w_bad(:,2);
-        plot3(x_r, y_r, z_r, 'r.', 'MarkerSize', 15);
+        plot3(x_r, y_r, z_r, 'r.', 'MarkerSize', 7);
 
     end
 

@@ -2,7 +2,7 @@
 clear
 clc
 close all
-directory = 'C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/Data\Stimulated Forces';
+directory = 'C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/Data\Crazy';
 fileList = dir(fullfile(directory, '*.mat'));
 rows = 3;
 cols = 3;
@@ -10,7 +10,9 @@ cols = 3;
 cell_array = {};
 to_check = [];
 muscle_to_check = [];
-muscles = 9;
+muscles = 1;
+w_refs = create_grid(0,model);
+
 for i = 1:muscles:length(fileList)
     
     for j = 1:min(muscles, length(fileList) - i + 1)
@@ -23,9 +25,12 @@ for i = 1:muscles:length(fileList)
         if str2double(number(2))==2
             continue
         end
-
+        pos = str2double(number(1));
+        goal = w_refs(pos,:)';
+        %goal = wrist_position(xout(1,:)');
+        last = wrist_position(xout(end,:)') ;
         % Calculate the error
-        error = wrist_position(xout(end,:)') - wrist_position(xout(1,:)');
+        error = goal  - last;
 
         % Create a subplot
         %subplot(rows, cols, str2double(number(2)));
@@ -37,7 +42,7 @@ for i = 1:muscles:length(fileList)
             to_check = [to_check str2double(number(1))];
             muscle_to_check = [muscle_to_check str2double((number(2)))];
             
-            plot_wrist_positions(xout, model)
+            %plot_wrist_positions(xout, model)
         else
             
             %text(1.5, 0.5, num2str(error));

@@ -14,11 +14,10 @@ warnidx=[]; % used to record warnings from MATLAB
 
 % Load Positions
 w_refs = create_grid(0,model);
-
 % To repeat after testing
 repeat = [];
 warning('error', 'MATLAB:nearlysingularMatrix');
-
+confg = zeros(length(w_refs),11);
 %% Loop through all positions
 for j = 1:length(w_refs)
     %position = positions(i,:);
@@ -28,7 +27,7 @@ for j = 1:length(w_refs)
     warn = 0;
     
     %% Lopp through muscles 
-    for muscle = 10
+    for muscle = 9
         warnCount = 0;
         complete = 0;
 
@@ -44,7 +43,7 @@ for j = 1:length(w_refs)
                        
             % Set simulation parameters
             t = 0;
-            tend = 3;
+            tend = 1;
             tstep = .001; %default = .003 
             nsteps = round((tend-t)/tstep)+1; % +1 allows for saving of initial state
            
@@ -82,8 +81,8 @@ for j = 1:length(w_refs)
                 
                 %Set neural excitation
                 u = zeros(nmus,1);
-                eles = muscledict(muscle);
-                u(muscle)=1;
+                %eles = muscledict(muscle);
+                %u(muscle)=1;
 
                 % Set moment and external force
                 M = zeros(5,1);
@@ -93,17 +92,14 @@ for j = 1:length(w_refs)
                 K = eye(3)*2000;
                 I = 100;
                 %% PID 
-                [dPhand_dx, Phand] = pos_jacobian(x,model); % find position and velocity of the hand
-                B= 300;
-                Vhand=dPhand_dx*x(12:22);
-
                 hand_current = wrist_position(x);
                 error_pos = hand_goal-hand_current;
                 error_int = error_int + error_pos*tstep;
 
                 % PI calculation for time step
                 handF = K*error_pos+I*error_int;
-
+                
+                % Arm Support
                 [dPhand_dx, Phand] = pos_jacobian(x,model);
                 supportEq=[0;0.3;-0.15];
                 K=diag([0 30 30]);
@@ -166,9 +162,11 @@ for j = 1:length(w_refs)
         if any(abs(error_pos)>0.05)
             repeat = [repeat j];
         else
-            [f, ~, ~, ~, ~,~,qTH] = das3('Dynamics',x,xdot,step_u,M,exF,handF);
-            arm_config = [qTH' x(10:11)'];
-            save(['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\Static Forces/',num2str(j),'_',num2str(muscle),'.mat'],'xout','forces','x','arm_config','mean_force');
+            confg(j,:) = x(1:11);
+            %[f, ~, ~, ~, ~,~,qTH] = das3('Dynamics',x,xdot,step_u,M,exF,handF);
+            %arm_config = [qTH' x(10:11)'];
+
+            %save(['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\Crazy/',num2str(j),'_',num2str(muscle),'.mat'],'xout','forces','x','arm_config','mean_force');
         end
 
         
@@ -176,3 +174,4 @@ for j = 1:length(w_refs)
 end
 
 
+save('C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\960.mat','confg');

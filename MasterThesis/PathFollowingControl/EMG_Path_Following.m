@@ -16,7 +16,7 @@ reachdist = 30;
 d = 4;
 startPos = 13451;
 
-totry = load('C:\Users\s202421\Documents\GitHub\MasterThesis\System Modelling\matlab.mat');
+totry = load('C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/System Modelling\matlab.mat');
 totry = totry.to_try';
 not_good = [1 15 18 21];
 
@@ -26,8 +26,7 @@ totry(not_good) = [];
 %Load feasible points
 load('feasiblepoints.mat') %MFM feasible, state feasible, wrist feasible, torque feasible
 
-totry = totry(1,:);
-for idx = 1:length(totry)
+for idx = 2:length(totry)
     endPos = totry(idx);
     % Find Best Path using KNN
     paths = find_path(d,reachdist,startPos,endPos);
@@ -122,7 +121,7 @@ for idx = 1:length(totry)
             % If the hand has reached close to the Goal Pose change
             % position in path.
             % If not continue trying to reach the same point.
-            if distance < 0.03 || trial >2 
+            if distance < 0.03 || trial >1 
                 if pathIdx < length(paths)
                     pathIdx=pathIdx+1;
                     fprintf("New point %s \n", string(pathIdx))
@@ -192,9 +191,9 @@ for idx = 1:length(totry)
         % Compute desired torque
         tau_des = tau_feedback + staticTorque';
         
-        stroke = 10;
+        stroke = 1;
         % Time to switch activation and add the stroke function
-        if mod(i,25)==0
+        if mod(i,33)==0
             alpha0=computeActivations(MFM,tau_des,alpha0);
             for j=1:9
                 mus=whichMuscles(j);
@@ -297,16 +296,16 @@ for idx = 1:length(totry)
     GoalLocation = GoalLocation(1:i,:);
     tsave=tstep*(0:i-1);
     
-    figure()
-    subplot(1,2,1)
-    plot(tsave(100:i),MuscleForces(100:i,[1 2 5]))
-    legend('triceps', 'deltoids', 'biceps')
-    subplot(1,2,2)
-    plot(tsave(100:i),actStep(100:i,[1 2 5]))
-    legend('triceps', 'deltoids', 'biceps')
+    % figure()
+    % subplot(1,2,1)
+    % plot(tsave(100:i),MuscleForces(100:i,[1 2 5]))
+    % legend('triceps', 'deltoids', 'biceps')
+    % subplot(1,2,2)
+    % plot(tsave(100:i),actStep(100:i,[1 2 5]))
+    % legend('triceps', 'deltoids', 'biceps')
 
 
-    error = HanGoal-Phand;
+    error = HandGoal-Phand;
     
 
 
