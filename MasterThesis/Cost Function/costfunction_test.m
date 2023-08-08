@@ -1,17 +1,22 @@
 
 
 % Step 2: Define the Constraints
-lb = -2; % Lower bound for the controller position (x)
-ub = 2;  % Upper bound for the controller position (x)
+lb = [1.2 3]; % Lower bound for the controller position (x)
+ub = [3 15];  % Upper bound for the controller position (x)
 
+global G_total  cost_total total_effort total_term
+G_total = [];
+cost_total = [];
+total_effort = [];
+total_term = [];
 % Step 3: Run the Optimization using Simulated Annealing
 options = optimoptions('simulannealbnd', 'Display', 'iter', 'MaxIterations', 100);
 
 % Set custom annealing schedule in options
 %options.AnnealingFcn = @customAnnealingSchedule;
 %options.TemperatureFcn = @customAnnealingSchedule;
-options.FunctionTolerance = 1e-6;
-initial_guess = 0;
+options.FunctionTolerance = 1e-3;
+initial_guess = [10 1.3];
 % Run the simulated annealing optimization
 [optimal_position, optimal_cost] = simulannealbnd(@costfunction, initial_guess, lb, ub, options);
 
@@ -20,6 +25,13 @@ disp('Optimal Position:')
 disp(optimal_position)
 disp('Optimal Cost:')
 disp(optimal_cost)
+
+disp(G_total)
+disp(cost_total)
+
+    
+matrix = [G_total; cost_total]%; total_term];
+save('matrix');
 
 % Step 1: Define the Cost Function
 function cost = myCostFunction(x)
@@ -37,6 +49,7 @@ function cost = myCostFunction(x)
     weight_error = 1;
     weight_effort = 1;
     cost = weight_error * error_term + weight_effort * effort_term;
+
 end
 
 % Custom annealing schedule function with 20% reduction factor
@@ -54,39 +67,55 @@ function cost = costfunction(G)
     effort = zeros(Nm,9);
     for movement = 1:Nm
         % Simulate the reaching movement and calculate the error
-        [error(movement,:),effort(movement,:)] = simulate_reaching_movement(G, target);
+        [error,effort, time] = simulate_reaching_movement(G);%, target);
 
     end
-    error_term = term_calculation("error",error);
-    error_effort = term_calculation("effort",effort);
+    error_term = term_calculation("error",error, time);
+    error_effort = term_calculation("effort",effort, time);
 
-    cost = error_term + error_effort;
+    cost = error_term ;%+ 0.000001*error_effort;
+    
+    global G_total cost_total total_effort total_term
+    G_total = [G_total; G];
+    cost_total = [cost_total; cost];
+    total_effort = [total_effort error_effort];
+    total_term = [total_term error_term];
 
     end
 
-function result = term_calculation(type,value)
+function result = term_calculation(type,value, time)
     if type == "error"
         a = 2;
     elseif type == "effort"
         a = 6;
     end
-    Nm = 12;
+    Nm = 1;
     cumulative_error = 0;
     for i = 1:Nm
-        value_int= integration(value(i));
-        cummulatve_error = cummulatve_error + value_int;
+        value_int= integration(value, time);
+        cumulative_error = cumulative_error + value_int;
     end
 
-    result = sqrt(1/(a*T*Nm)*sum_int);
+    result = sqrt(1/(a*time*Nm)*cumulative_error);
 
 end
 
-function integration(value)
-    value_s2 = value.^2;
-    T = 2;
+function sum_int = integration(value,time)
+
+    T = time;
     time_step = 0.003;
-    integral = trapz(0:time_step:(T-1)*time_step, value_s2);
-    
+
+    t = time_step:time_step:T;
+    if length(t) ~= size(value, 1)
+        error('Mismatch in the length of time vector and data.')
+    end
+
+    %Square the data
+    value_s2 = value.^2;
+
+    % Use trapz to integrate
+    integral = trapz(t,value_s2);
+
     sum_int = sum(integral);
 
 end

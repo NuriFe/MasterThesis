@@ -3,7 +3,7 @@ clear
 clc
 close all
 
-load('C:\Users\s202421\Documents\GitHub\MasterThesis\PathFollowingControl\feasiblepoints.mat')
+load('C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/PathFollowingControl\feasiblepoints.mat')
 points = wristFeasible;
 [model, nstates, ndof, nmus, iLce] = initialize_model();
 

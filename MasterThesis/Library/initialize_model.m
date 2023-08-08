@@ -8,7 +8,7 @@ model.dofs{4}.range=[34 34]*pi/180;
 model.dofs{5}.range=[-20 -20]*pi/180;
 model.dofs{6}.range=[-16 -16]*pi/180;
 das3('Initialize',model);
-disp('Done.');
+%disp('Done.');
 
 % Initialize the model
 ndof=11;

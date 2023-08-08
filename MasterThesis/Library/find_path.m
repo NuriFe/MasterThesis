@@ -1,19 +1,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % FindPath
 
-function paths=find_path(d,reachdist,startPos,endPos)
-reachdist=reachdist/100;
+function paths=find_path(d,startPos,endPos)
 
 load('feasiblepoints.mat')
 
-dist=0;
-if nargin==2
-    while dist<reachdist
-        startPos=randi(length(wristFeasible));
-        endPos=randi(length(wristFeasible));
-        dist=pdist([wristFeasible(startPos,:);wristFeasible(endPos,:)]);
-    end
-end
+
 
 currentPos=startPos;
 

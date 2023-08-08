@@ -36,7 +36,7 @@ error_to_check=[];
 %A(ismember(A, toDelete)) = [];
 load('C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\960.mat')
 positions = confg;
-for j = 261:300
+for j = 301:960
     disp(j);
     position = positions(j,:);
     complete = 0;
@@ -204,4 +204,4 @@ for j = 261:300
     % name = [j,Kp(1,1),Kp(2,2),Kp(3,3),Kd,Ki];
     % title(name)
 end
-save('C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\261_300_to_check.mat','tocheck','error_to_check');
+save('C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\301_960_to_check.mat','tocheck','error_to_check');
