@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Point_to_Point.m
+% Static_Control.m
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 clear
@@ -11,11 +11,6 @@ switchTime=1.3;
 %Initialize Model
 [model, nstates, ndof, nmus, iLce] = initialize_model();
 
-%Set Parameters to calculate path
-reachdist = 30;
-d = 4;
-startPos = 13451;
-
 totry = load('C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/PathFollowingControl\totry.mat');
 totry = totry.to_try';
 not_good = [1 15 18 21];
@@ -25,18 +20,13 @@ totry(not_good) = [];
 
 %Load feasible points
 load('feasiblepoints.mat') %MFM feasible, state feasible, wrist feasible, torque feasible
-
-for idx = 2:length(totry)
-    endPos = totry(idx);
-    % Find Best Path using KNN
-    paths = FindPath(d,reachdist,startPos,endPos);
-    paths = [paths paths(end)];
-
+figure;
+for idx = 1:length(totry)
     % Set initial state
-    pos = paths(1);
+    pos = totry(idx);
     x=zeros(nstates,1);
     x(1:11)=stateFeasible(:,pos);
-    
+    position = stateFeasible(:,pos);
     LCEopt=das3('LCEopt');
     muscle_tendon_lengths = das3('Musclelengths', x);    % only the first 11 elements of x (the joint angles) will be used
     slack_lengths = das3('SEEslack');
@@ -51,8 +41,7 @@ for idx = 2:length(totry)
     warning('')
 
     % Set goal position
-    pathIdx = 2;
-    GoalPos = paths(pathIdx);
+    GoalPos = totry(idx);
     qGoal = stateFeasible(:, GoalPos);
     xGoal = initialize_state(qGoal, nstates, iLce);
     HandGoal = wrist_position(xGoal);
@@ -63,7 +52,7 @@ for idx = 2:length(totry)
     
     % Set simulation parameters
     time = 0;
-    tend = switchTime*(length(paths)-1)*2;
+    tend = 0.5;
     tstep = .003; % default was 0.003; decreased to make more stable numerically
     nsteps = round((tend-time)/tstep)+1; 
 
@@ -106,43 +95,10 @@ for idx = 2:length(totry)
     alpha0 = zeros(9,1);
     i = 0;
     timer = 0;
-    trial = 0; % Counter to try at most 3 times to reach the same position
-    last = 0; % Will be set to 1 when the last point of the path is reached
-    while last == 0
+    while timer< tend
         lastwarn('');
         i = i+1;
         timer = timer + tstep;
-
-        % Switch the Goal Position
-        if mod(i,floor(switchTime/tstep))==0 
-            HandCurrent = wrist_position(x);
-            distance = norm(HandGoal-HandCurrent);
-            
-            % If the hand has reached close to the Goal Pose change
-            % position in path.
-            % If not continue trying to reach the same point.
-            if distance < 0.03 || trial >1 
-                if pathIdx < length(paths)
-                    pathIdx=pathIdx+1;
-                    fprintf("New point %s \n", string(pathIdx))
-                else 
-                    last =1;
-                end
-                GoalPos=paths(pathIdx);
-                HandGoal=wristFeasible(paths(pathIdx),:)';
-                staticTorque=torqueFeasible(GoalPos,:);
-                MFM=Mfeasible(:,:,GoalPos);
-                openLoopAct=activationFeasible(GoalPos,:);
-                if d~=100
-                    sumErr=0;
-                end
-                trial = 0;
-            else
-                trial = trial +1;
-                fprintf("Repeating Hand Goal %s \n\n",string(pathIdx))                        
-            end
-        end
-
 
         % Arm Support
         [dPhand_dx, Phand] = pos_jacobian(x,model);
@@ -178,10 +134,6 @@ for idx = 2:length(totry)
         Fdes=Fk+Fi;
         
         % Compute torque from Kinematic Jacobian
-        %[dPhand_dx, ~, ~] = handpos_jacobian(x);
-        %tau_feedback = dPhand_dx'*Fdes;
-        %indx = [1:2 9:10];
-        %tau_feedback= tau_feedback(indx,:);
         [~, ~, ~, ~, ~, ~, qTH] = das3('Dynamics',x, zeros(size(x)), zeros(138,1));
         pose=[qTH;x(10:11)];
         J=computeJacobianDAS_5angles(pose);
@@ -190,32 +142,17 @@ for idx = 2:length(totry)
 
         % Compute desired torque
         tau_des = tau_feedback + staticTorque';
-        
-        stroke = 1;
-        % Time to switch activation and add the stroke function
         if mod(i,33)==0
             alpha0=computeActivations(MFM,tau_des,alpha0);
             for j=1:9
                 mus=whichMuscles(j);
-                if j == 5
-                    alpha0(j)= alpha0(j)*(stroke); %biceps overactivity
-                    if alpha0(j) >1
-                        alpha0(j) = 1;
-                    elseif alpha0(j) == 0 && stroke >1
-                        alpha0(j)= 0.3;
-                    end
-                elseif (j == 1 || j == 2) && stroke >1
-                    alpha0(j) = alpha0(j)/stroke/2;
-
-                end
                 u(mus)=alpha0(j)*1;
 
             end
         end
-        
         try
             % Advance simulation by a step
-            [x, xdot, step_u] = das3step_B(x, u, tstep, xdot, step_u, Moments, exF, handF);%;, K, B);
+            [x, xdot, step_u] = das3step(x, u, tstep, xdot, step_u, Moments, exF, handF);%;, K, B);
     
             Fhand(i,:)=handF;
             usave(i,:)=u;
@@ -273,12 +210,10 @@ for idx = 2:length(totry)
         x(iLce)=-3+6*rand(nmus,1); % randomly select initial Lce
     else
         complete=1;
+        subplot(5, 6, idx);
         plot_wrist_positions(xsave(1:i-1,:),model,HandGoal)
-        hold on
-        wrists =  wristFeasible(paths,:);
-        plot_wrist_references(wrists,model);
-        view(-90,90);
-        hold off
+        view(-90,90)
+
     end
     error = HandGoal-Phand;
 
@@ -291,21 +226,12 @@ for idx = 2:length(totry)
     FBTorque = FBTorque(1:i,:);
     TotalTorque = TotalTorque(1:i,:);
     actStep = actStep(1:i,:);
+    MuscleForces = MuscleForces(1:i,:);
     Fkstep = Fkstep(1:i,:);
     Fistep = Fistep(1:i,:);
     GoalLocation = GoalLocation(1:i,:);
     tsave=tstep*(0:i-1);
     
-    % figure()
-    % subplot(1,2,1)
-    % plot(tsave(100:i),MuscleForces(100:i,[1 2 5]))
-    % legend('triceps', 'deltoids', 'biceps')
-    % subplot(1,2,2)
-    % plot(tsave(100:i),actStep(100:i,[1 2 5]))
-    % legend('triceps', 'deltoids', 'biceps')
-
-
-    error = HandGoal-Phand;
     
 
 
@@ -314,4 +240,5 @@ for idx = 2:length(totry)
 
 
     end
+
 end

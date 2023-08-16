@@ -11,13 +11,14 @@
     %Set Parameters to calculate path
     d = 4;
 
-    totry = load('C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/System Modelling\matlab.mat');
+    totry = load('C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/PathFollowingControl/totry.mat');
     totry = totry.to_try';
     not_good = [1 15 18 21];
     totry(not_good) = [];
 
     startPos = 13451;
-    
+    triceps = 0;
+    triceps_stroke = 0;
     
     for indx =1:length(totry)
         endPos = totry(indx);
@@ -64,6 +65,10 @@
         PositionErrors = zeros(nsteps,3);
         xsave = zeros(nsteps,nstates);
         usave = zeros(nsteps,138);
+        FES = zeros(nsteps,1);
+        u_triceps = zeros(nsteps,1);
+        u_total = zeros(nsteps,1);
+
         % Initialize parameters
         u=zeros(nmus,1);
         handF=[0;0;0];
@@ -164,6 +169,7 @@
             tau_des = tau_feedback + staticTorque';
             
             stroke = 7;
+            %stroke = 1;
             % Time to switch activation and add the stroke function
             if mod(i,10)==0
                 alpha0=computeActivations(MFM,tau_des,alpha0);
@@ -183,28 +189,29 @@
                     u(mus)=alpha0(j)*1;
     
                 end
-                Kd = 0.6;
                 [~, Phand] = pos_jacobian(x,model);
                 error = abs(HandGoal-Phand);
-                triceps = u(129);
-    
+
+                triceps_stroke = u(129);
+
                 if triceps == 0
                     triceps = 0.2;
                 else
-                    Kp = sigmoidGainControl(triceps,G(1),G(2),1,0.5);
-                    triceps = 0.2+Kp*triceps;
-    
+                    Kp = sigmoidGainControl(triceps_stroke,G(1),G(2),1,0.5);
+                    triceps = 0.2+Kp*triceps_stroke;
+
                 end
-        
+
                 if triceps >1
                     triceps = 1;
                 elseif triceps <0.2
                     triceps = 0.2;
                 end
-                u([129:133])=triceps;
-    
+                u(129:133)=triceps;
             end
-            
+            u_triceps(i,:) = triceps_stroke;
+            u_total(i,:) = triceps;
+            FES(i,:) = triceps - triceps_stroke;
             % G calculation
             [~, Phand] = pos_jacobian(x,model);
             error = abs(HandGoal-Phand);
@@ -243,29 +250,42 @@
             x(iLce)=-3+6*rand(nmus,1); % randomly select initial Lce
         else
             complete=1;
-            h9 = figure(9);
-            plot_wrist_positions(xsave(1:i-1,:),model,HandGoal)
-            hold on
-            wrists =  wristFeasible(paths,:);
-            plot_wrist_references(wrists,model);
-            view(-90,90);
-            hold off
-            filename = sprintf('G(%.2f)_G(%.2f)_Stroke_%d_position_totry(%d)', G(1), G(2), stroke, endPos);
-            saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/Data\stroke/',filename, '_wp.jpg'])
-            saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\stroke/',filename,'_wp.fig'])
+            %h9 = figure(9);
+            %plot_wrist_positions(xsave(1:i-1,:),model,HandGoal)
+            %hold on
+            %wrists =  wristFeasible(paths,:);
+            %plot_wrist_references(wrists,model);
+            %view(-90,90);
+            %hold off
+            %filename = sprintf('G(%.2f)_G(%.2f)_Stroke_%d_position_totry(%d)', G(1), G(2), stroke, endPos);
+            %saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/Data\stroke/',filename, '_wp.jpg'])
+            %saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\stroke/',filename,'_wp.fig'])
 
             
             tout = tstep:tstep:timer;
             uout = usave(1:i,:);
-            h10 = figure(10);
+            %h10 = figure(10);
             plot_neurexct(tout,uout);
-            filename = sprintf('G(%.2f)_G(%.2f)_Stroke_%d_position_totry(%d).png', G(1), G(2), stroke, endPos);
+            %filename = sprintf('G(%.2f)_G(%.2f)_Stroke_%d_position_totry(%d).png', G(1), G(2), stroke, endPos);
 
-            saveas(h10,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/Data\stroke/',filename, '_ne.jpg'])
-            saveas(h10,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\stroke/',filename,'_ne.fig'])
-            MuscleForces = MuscleForces(1:i,:);
-            PositionErrors = PositionErrors(1:i,:);
-
+            %saveas(h10,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/Data\stroke/',filename, '_ne.jpg'])
+            %saveas(h10,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\stroke/',filename,'_ne.fig'])
+            %MuscleForces = MuscleForces(1:i,:);
+            %PositionErrors = PositionErrors(1:i,:);
+            
+            %subplot(5, 6, indx);
+            %figure()
+            %plot_wrist_positions(xsave(1:i-1,:),model,HandGoal)
+            %hold on
+            %wrists =  wristFeasible(paths,:);
+            %plot_wrist_references(wrists,model);
+            %view(-90,90);
+            %hold off
+            
+            %u_triceps = u_triceps(1:i,:);
+            %FES = FES(1:i,:);
+            %u_total = u_total(1:i,:);
+            %plotting_triceps_FES(tout, u_triceps, FES, u_total)
         end
         
     

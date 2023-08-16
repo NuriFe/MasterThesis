@@ -15,7 +15,7 @@ switchTime=1.3;
 d = 4;
 startPos = 13451;
 
-totry = load('C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/System Modelling\matlab.mat');
+totry = load('C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/PathFollowingControl\totry.mat');
 totry = totry.to_try';
 not_good = [1 15 18 21];
 totry(not_good) = [];

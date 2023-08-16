@@ -1,6 +1,35 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Finding Force for Static Position with Neural Excitation
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% --- Description ---
+% This script is designed to simulate arm configurations using a Dynamic 
+% Arm Simulation (DAS) to find the force for a static position under 
+% different muscle neural excitations.
+%
+% --- Inputs ---
+% 1. Arm Configuration Files:
+%    - Type: *.mat files
+%    - Content: Expected to have variables 'arm_config' and 'x' denoting 
+% the arm configuration and state.
+%
+% --- Outputs ---
+% 1. Simulated Forces, States, and Arm Torques:
+%    - Type: *.mat files
+%    - Content: Contains `xout` (states over time), 
+% `forces` (computed forces over time), `x` (final state), `mean_force` 
+% (average force), and `armTorque` (joint moments).
+%
+% --- Additional Notes ---
+% 1. The code employs a PI controller to compute the hand forces.
+% A PID controller is also present but commented out.
+% 2. Ensure supporting functions and data referenced in this script 
+% (e.g., `das3()`, `initialize_model()`) are accessible in the MATLAB path.
+% 3. During the simulation, the script also checks for potential warnings 
+% and issues, and attempts to mitigate them by adjusting initial conditions
+% or muscle lengths.
+% 4. The progress of the simulation, as well as error metrics related to 
+% wrist positions, are printed to the console.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 clear
@@ -114,10 +143,10 @@ for j = 1:length(positions)
                 error_int = error_int + error_pos*tstep;
 
                 % PI calculation for time step
-                handF = K*error_pos+I*error_int;
+                %handF = K*error_pos+I*error_int;
 
                 %PID calculation for time step
-                %handF= K*error_pos+I*error_int -B*Vhand;
+                handF= K*error_pos+I*error_int -B*Vhand;
                 
                 % Arm Support
                 [dPhand_dx, Phand] = pos_jacobian(x,model);
@@ -175,8 +204,8 @@ for j = 1:length(positions)
 
         cut = round(length(forces)*0.9);
         mean_force=mean(forces(cut:end,:));
-        %plot_multiple(xout,uout,forces,tstep,tend,tout,hand_goal,model)
-        save(['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\Stimulated Forces/',num2str(j),'_',num2str(muscle),'.mat'],'xout','forces','x', 'mean_force', "armTorque");
+        plot_multiple(xout,uout,forces,tstep,tend,tout,hand_goal,model)
+        %save(['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\Stimulated Forces/',num2str(j),'_',num2str(muscle),'.mat'],'xout','forces','x', 'mean_force', "armTorque");
         %close all;
     end
 end

@@ -13,7 +13,7 @@ for i = muscle:10:length(fileList)
     w_ref = wrist_position(data.x);
     forces = (data.forces)';
     tstep = 0.001;
-    tend=0.5;
+    tend=3;
     t = 0:tstep:tend;
     figure()
     subplot(1,3,1)

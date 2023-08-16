@@ -1,3 +1,34 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% STATIC FORCE CALCULATOR FOR MUSCULAR ACTIVITY
+%
+% Description:
+% This script processes static force data based on various muscular activities 
+% to understand the torque profiles, joint configurations, wrist positions, 
+% and the resultant forces at the wrist during different poses. The code 
+% fetches data from predefined directories, calculates mean force values, 
+% integrates with OpenSim models, computes dynamics, and collates the data 
+% for further analysis or use.
+%
+% Inputs:
+% - Preprocessed '.mat' files containing force data for each pose and muscle 
+%   group located in the specified directory.
+%
+% Outputs:
+% - torqueData: 5xN matrix representing torques for N poses.
+% - angleData: 5xN matrix showing joint configurations for N poses.
+% - wristposition: 3xN matrix indicating wrist positions for N poses.
+% - wristforces: 3xN matrix showing resultant wrist forces for N poses.
+%
+% Notes:
+% - The script presumes a uniform structure for the '.mat' data files.
+% - Ensure that the 'das3' function and required models are in the MATLAB path.
+% - Adjust the 'directory' variable to point to the correct data source.
+% - Data is saved to a predefined directory, ensure it exists or adjust as needed.
+% - The script has been optimized for 64 data points; any variations might 
+%   require adjustments in the loop structures.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 %% Clear data
 clc

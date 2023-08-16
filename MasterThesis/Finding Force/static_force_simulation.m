@@ -1,5 +1,30 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Finding Force for Static Position 
+% Finding Force for Static Position Without Neural Excitation
+% 
+% Description:
+% This code simulates the dynamics of a model to determine the force 
+% required for static positions. It uses an iterative process to adjust the
+%  model's state and uses PI control to achieve desired hand positions. 
+% Any warnings during the simulation due to issues like a near-singular 
+% matrix are handled, and if necessary, the initial muscle length (Lce) 
+% is reselected.
+% 
+% Inputs:
+% 1. DAS Model Initialization - through initialize_model().
+% 2. Predefined positions - created by create_grid().
+% 3. 'equilibrium.mat' - loaded as initial state.
+% 
+% Outputs:
+% 1. `confg` - array containing the configurations for which the simulation 
+% was successful.
+% 2. A saved .mat file (e.g., '960.mat') with the `confg` data.
+% 
+% Additional notes:
+% - Errors in position are calculated and if they exceed a certain 
+% threshold, the iteration is marked for repetition.
+% - Data pertaining to the model dynamics, arm configurations, and mean
+%  force are saved at a specified location.
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -18,10 +43,9 @@ w_refs = create_grid(0,model);
 repeat = [];
 warning('error', 'MATLAB:nearlysingularMatrix');
 confg = zeros(length(w_refs),11);
+errors = zeros(length(w_refs),3);
 %% Loop through all positions
 for j = 1:length(w_refs)
-    %position = positions(i,:);
-
     % Initiliaze variables
     mean_force = zeros(10,3);
     warn = 0;
@@ -81,8 +105,6 @@ for j = 1:length(w_refs)
                 
                 %Set neural excitation
                 u = zeros(nmus,1);
-                %eles = muscledict(muscle);
-                %u(muscle)=1;
 
                 % Set moment and external force
                 M = zeros(5,1);
@@ -91,7 +113,7 @@ for j = 1:length(w_refs)
                 %% PI Controller
                 K = eye(3)*2000;
                 I = 100;
-                %% PID 
+                % PID 
                 hand_current = wrist_position(x);
                 error_pos = hand_goal-hand_current;
                 error_int = error_int + error_pos*tstep;
@@ -106,9 +128,7 @@ for j = 1:length(w_refs)
                 B=diag([120 120 120]);
                 Vhand=dPhand_dx*x(12:22);
                 handF=handF-K*(Phand-supportEq)-B*Vhand;
-                
-                %PID calculation for time step
-                %handF= K*error_pos+I*error_int;-B*Vhand;
+
                 % Advance simulation by a step
                 try
                     [x, xdot, step_u] = das3step(x, u, tstep, xdot, step_u, M, exF, handF);
@@ -150,14 +170,10 @@ for j = 1:length(w_refs)
         end
         
         error_pos = calculate_error(xout,hand_goal,j);
-        %if any(abs(error_pos)>0.04)
-        %    figure()
-        %    plot_wrist_positions(xout,model,hand_goal);
-        %end
+        errors(j,:)=error_pos;
         cut = round(length(forces)*0.9);
         mean_force=mean(forces(cut:end,:));
-        %plot_multiple(xout,uout,forces,tstep,tend,tout,hand_goal,model)
-
+        %plot_multiple(xout,uout,forces,tstep,tend,tout(2:end,:),hand_goal,model)
         %wrist_error = test(xout,mean_force,hand_goal,model,tend,tstep);
         if any(abs(error_pos)>0.05)
             repeat = [repeat j];
@@ -165,7 +181,6 @@ for j = 1:length(w_refs)
             confg(j,:) = x(1:11);
             %[f, ~, ~, ~, ~,~,qTH] = das3('Dynamics',x,xdot,step_u,M,exF,handF);
             %arm_config = [qTH' x(10:11)'];
-
             %save(['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\Crazy/',num2str(j),'_',num2str(muscle),'.mat'],'xout','forces','x','arm_config','mean_force');
         end
 
@@ -174,4 +189,4 @@ for j = 1:length(w_refs)
 end
 
 
-save('C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\960.mat','confg');
+%save('C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\960.mat','confg');

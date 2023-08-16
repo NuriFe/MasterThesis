@@ -21,7 +21,8 @@ hold on
 plot(tout,y);
 plot(tout,z);
 legend('Fx', 'Fy', 'Fz');
-ylabel('forces(N)');
+ylabel('Forces (N)');
+xlabel('Time (s)')
 xlim([0, tend]);
 ylim([-100 100]);
 

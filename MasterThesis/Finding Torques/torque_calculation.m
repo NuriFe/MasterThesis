@@ -1,3 +1,32 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TORQUE CALCULATOR FROM FORCES 
+%
+% Description:
+% This script processes the forces under muscle stimulation to derive the 
+% corresponding torques, joint configurations, wrist positions, and wrist 
+% forces during different poses. The code fetches data from a predefined 
+% directory, integrates it with OpenSim models, computes dynamics, 
+% and collates the results.
+%
+% Inputs:
+% - Preprocessed '.mat' files containing force data for each pose and muscle 
+%   group under stimulated conditions, located in the specified directory.
+%
+% Outputs:
+% - torqueData: 5xN matrix of torques for N poses.
+% - angleData: 5xN matrix of joint configurations for N poses.
+% - wristposition: 3xN matrix showing wrist positions for N poses.
+% - wristforces: 3xN matrix indicating resultant wrist forces for N poses.
+%
+% Notes:
+% - The code assumes a structured '.mat' file format for the force data.
+% - Ensure 'das3' function and required models are in the MATLAB path.
+% - Modify the 'directory' variable to point to the correct data source.
+% - Data will be saved to a predefined directory; adjust path if necessary.
+% - The script is optimized for 64 data points; adjust loop structures for other data sizes.
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Clear data
 clc
