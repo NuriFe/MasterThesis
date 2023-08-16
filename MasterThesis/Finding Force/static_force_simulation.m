@@ -29,7 +29,7 @@
 
 
 clear
-%close all
+close all
 clc
 
 % Initialize DAS model
@@ -44,12 +44,14 @@ repeat = [];
 warning('error', 'MATLAB:nearlysingularMatrix');
 confg = zeros(length(w_refs),11);
 errors = zeros(length(w_refs),3);
+sstime = zeros(length(w_refs),1);
+simulation_time = zeros(length(w_refs),1);
 %% Loop through all positions
 for j = 1:length(w_refs)
     % Initiliaze variables
     mean_force = zeros(10,3);
     warn = 0;
-    
+    tic
     %% Lopp through muscles 
     for muscle = 9
         warnCount = 0;
@@ -140,6 +142,13 @@ for j = 1:length(w_refs)
                     armTorque(i,:)=das3('Jointmoments',x);
                     [warnMsg, warnId] = lastwarn;
 
+                    tolerance = [0.2 0.2 0.2];
+                    if i>100 && sstime(j,:)==0
+                        avg_last_50 = mean(forces(i-50:i-1,:));
+                        if all(abs(forces(i,:) - avg_last_50) < tolerance) 
+                            sstime(j,:)=i*tstep;
+                        end
+                    end
                 catch exception
                      warnMsg = exception.message;
                      warnId = exception.identifier;                    
@@ -169,6 +178,7 @@ for j = 1:length(w_refs)
             warn=1;
         end
         
+        simulation_time(j,:)=toc;
         error_pos = calculate_error(xout,hand_goal,j);
         errors(j,:)=error_pos;
         cut = round(length(forces)*0.9);

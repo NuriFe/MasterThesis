@@ -46,6 +46,7 @@ directory = 'C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\St
 fileList = dir(fullfile(directory, '*.mat'));
 
 positions = zeros(length(fileList),11);
+
 for i = 1:length(fileList)
     % Load the .mat file
     name = fileList(i).name;
@@ -62,8 +63,12 @@ for i = 1:length(fileList)
 end
 warning('error', 'MATLAB:nearlysingularMatrix');
 
+errors = zeros(20,3,9);
+sstime = zeros(20,9);
+simulation_time = zeros(20,9);
+
 %% Loop through all positions
-for j = 1:length(positions)
+for j = 1:20
     position = positions(j,:);
 
     % Initiliaze variables
@@ -71,7 +76,8 @@ for j = 1:length(positions)
     warn = 0;
 
     %% Lopp through muscles 
-    for muscle = 1:9
+    for muscle = 9
+        tic
         warnCount = 0;
         complete = 0;
 
@@ -166,6 +172,15 @@ for j = 1:length(positions)
                     uout(i,:)=u;
                     armTorque(i,:)=das3('Jointmoments',x);
                     [warnMsg, warnId] = lastwarn;
+                    
+                    tolerance = [0.2 0.2 0.2];
+                    if i>50 && sstime(j,muscle)==0
+                        avg_last_50 = mean(forces(i-50:i-1,:));
+                        if all(abs(forces(i,:) - avg_last_50) < tolerance) 
+                            sstime(j,muscle)=i*tstep;
+                        end
+                    end
+
                 catch exception
                      warnMsg = exception.message;
                      warnId = exception.identifier;
@@ -201,10 +216,12 @@ for j = 1:length(positions)
         %plot_wrist_positions(xout,model,hand_goal);
         
         error_pos = calculate_error(xout,hand_goal,j);
+        errors(j,:,muscle)=error_pos;
+        simulation_time(j,muscle)=toc;
 
         cut = round(length(forces)*0.9);
         mean_force=mean(forces(cut:end,:));
-        plot_multiple(xout,uout,forces,tstep,tend,tout,hand_goal,model)
+        %plot_multiple(xout,uout,forces,tstep,tend,tout,hand_goal,model)
         %save(['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\Stimulated Forces/',num2str(j),'_',num2str(muscle),'.mat'],'xout','forces','x', 'mean_force', "armTorque");
         %close all;
     end

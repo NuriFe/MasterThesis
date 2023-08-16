@@ -15,15 +15,15 @@
     totry = totry.to_try';
     not_good = [1 15 18 21];
     totry(not_good) = [];
-
-    startPos = 13451;
     triceps = 0;
     triceps_stroke = 0;
-    
+    errors = zeros(length(totry),3);
+    sstime = zeros(length(totry),1);
+    figure()
     for indx =1:length(totry)
         endPos = totry(indx);
         load('feasiblepoints.mat')
-    
+        startPos = endPos;
         % Find Best Path using KNN
         paths = find_path(d,startPos,endPos);
         paths = [paths paths(end)];% paths(end-3)]; %remember to change it [paths paths(end)]
@@ -56,8 +56,8 @@
         
         % Set simulation parameters
         time = 0;
-        tend = switchTime*(length(paths)-1)*2;
-        tstep = .003; % default was 0.003; decreased to make more stable numerically
+        tend = 2;
+        tstep = .001; % default was 0.003; decreased to make more stable numerically
         nsteps = round((tend-time)/tstep)+1; 
         
         % Initialize variables for saving
@@ -78,7 +78,8 @@
         MFM = Mfeasible(:,:,GoalPos);
     
         % Start Simulation
-        fprintf('\nSimulating... {G}        ')
+        fprintf('\nSimulating...%s         ',string(indx))
+
         sumErr = 0;
         alpha0 = zeros(9,1);
         i = 0;
@@ -189,33 +190,7 @@
                     u(mus)=alpha0(j)*1;
     
                 end
-                [~, Phand] = pos_jacobian(x,model);
-                error = abs(HandGoal-Phand);
-
-                triceps_stroke = u(129);
-
-                if triceps == 0
-                    triceps = 0.2;
-                else
-                    Kp = sigmoidGainControl(triceps_stroke,G(1),G(2),1,0.5);
-                    triceps = 0.2+Kp*triceps_stroke;
-
-                end
-
-                if triceps >1
-                    triceps = 1;
-                elseif triceps <0.2
-                    triceps = 0.2;
-                end
-                u(129:133)=triceps;
             end
-            u_triceps(i,:) = triceps_stroke;
-            u_total(i,:) = triceps;
-            FES(i,:) = triceps - triceps_stroke;
-            % G calculation
-            [~, Phand] = pos_jacobian(x,model);
-            error = abs(HandGoal-Phand);
-            
             try
                 % Advance simulation by a step
                 [x, xdot, step_u] = das3step_B(x, u, tstep, xdot, step_u, Moments, exF, handF);%;, K, B);
@@ -234,6 +209,14 @@
                 error = HandGoal-Phand;
     
                 PositionErrors(i,:) = error;
+                tolerance = [0.06 0.06 0.06];
+                if i>100 && sstime(indx,:)==0
+                    avg_last_50 = mean(PositionErrors(i-50:i-1,:));
+                    if all(abs(PositionErrors(i,:) - avg_last_50) < tolerance) 
+                        sstime(indx,:)=i*tstep;
+                    end
+                end
+
             catch exception
                  warnMsg = exception.message;
                  warnId = exception.identifier;
@@ -250,6 +233,8 @@
             x(iLce)=-3+6*rand(nmus,1); % randomly select initial Lce
         else
             complete=1;
+            errors(indx,:)=error;
+
             %h9 = figure(9);
             %plot_wrist_positions(xsave(1:i-1,:),model,HandGoal)
             %hold on
@@ -262,10 +247,14 @@
             %saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\stroke/',filename,'_wp.fig'])
 
             
-            tout = tstep:tstep:timer;
+            tout = 0:tstep:timer;
+            h9 = figure(9);
+            plot_wrist_positions_2D(tout,xsave(1:i,:),HandGoal)
+            saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/Data/',sprintf('%.0f',indx),'.png']);
+
             uout = usave(1:i,:);
             %h10 = figure(10);
-            plot_neurexct(tout,uout);
+            %plot_neurexct(tout,uout);
             %filename = sprintf('G(%.2f)_G(%.2f)_Stroke_%d_position_totry(%d).png', G(1), G(2), stroke, endPos);
 
             %saveas(h10,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/Data\stroke/',filename, '_ne.jpg'])
@@ -282,12 +271,12 @@
             %view(-90,90);
             %hold off
             
-            u_triceps = u_triceps(1:i,:);
-            FES = FES(1:i,:);
-            u_total = u_total(1:i,:);
-            plotting_triceps_FES(tout, u_triceps, FES, u_total)
+            %u_triceps = u_triceps(1:i,:);
+            %FES = FES(1:i,:);
+            %u_total = u_total(1:i,:);
+            %plotting_triceps_FES(tout, u_triceps, FES, u_total)
         end
-        
+
     
         end
     end

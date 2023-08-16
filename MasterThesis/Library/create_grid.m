@@ -14,7 +14,9 @@ end_x = -0.08;
 x = linspace(start_x, end_x, 10);
 y = linspace(start_y, end_y, 8);
 z = linspace(start_z, end_z, 12);
-
+%x = linspace(start_x, end_x, 4);
+%y = linspace(start_y, end_y, 4);
+%z = linspace(start_z, end_z, 4);
 % Create a grid of coordinates
 [X, Y, Z] = meshgrid(x, y, z);
 % [z,x,y]
