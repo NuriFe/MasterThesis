@@ -11,12 +11,12 @@ end_x = -0.08;
 %x = start_x + distance * (0:2);
 %y = start_y + distance * (0:1);
 %z = start_z + distance * (0:2);
-x = linspace(start_x, end_x, 10);
-y = linspace(start_y, end_y, 8);
-z = linspace(start_z, end_z, 12);
-%x = linspace(start_x, end_x, 4);
-%y = linspace(start_y, end_y, 4);
-%z = linspace(start_z, end_z, 4);
+%x = linspace(start_x, end_x, 10);
+%y = linspace(start_y, end_y, 8);
+%z = linspace(start_z, end_z, 12);
+x = linspace(start_x, end_x, 4);
+y = linspace(start_y, end_y, 4);
+z = linspace(start_z, end_z, 4);
 % Create a grid of coordinates
 [X, Y, Z] = meshgrid(x, y, z);
 % [z,x,y]

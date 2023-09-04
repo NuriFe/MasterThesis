@@ -8,8 +8,10 @@ function act  = computeActivations(M,tau,alpha0)
     func=@penaltyFunc;
     [f,g]=func(x,M,tau);
     
+
     it=0;
     while norm(g)>1e-3 && it<120
+
         p=-Bk*g;
         alpha2=armijo(func,x,f,g,p,M,tau);
         xold=x;
@@ -22,6 +24,7 @@ function act  = computeActivations(M,tau,alpha0)
         Bk=(eye(9)-rho*sk*yk')*Bk*(eye(9)-rho*yk*sk')+rho*sk*sk';
         it=it+1;
     end
+
     for j=1:length(x)
         if x(j)<0
             x(j)=0;

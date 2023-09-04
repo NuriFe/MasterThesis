@@ -47,7 +47,7 @@ errors = zeros(length(w_refs),3);
 sstime = zeros(length(w_refs),1);
 simulation_time = zeros(length(w_refs),1);
 %% Loop through all positions
-for j = 1:length(w_refs)
+for j = 1:10:length(w_refs)
     % Initiliaze variables
     mean_force = zeros(10,3);
     warn = 0;
@@ -78,7 +78,7 @@ for j = 1:length(w_refs)
             step_u = zeros(nmus,1);
 
             % Create space for saving variables
-            tout = tstep*(0:nsteps)';
+            tout = tstep*(1:nsteps)';
             forces = zeros(nsteps,3);
             xout = zeros(nsteps,nstates);
             uout = zeros(nsteps,nmus);
@@ -183,6 +183,8 @@ for j = 1:length(w_refs)
         errors(j,:)=error_pos;
         cut = round(length(forces)*0.9);
         mean_force=mean(forces(cut:end,:));
+        create_osim(ndof, model, num2str(j), tout, xout)
+
         %plot_multiple(xout,uout,forces,tstep,tend,tout(2:end,:),hand_goal,model)
         %wrist_error = test(xout,mean_force,hand_goal,model,tend,tstep);
         if any(abs(error_pos)>0.05)

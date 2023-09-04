@@ -68,7 +68,7 @@ sstime = zeros(20,9);
 simulation_time = zeros(20,9);
 
 %% Loop through all positions
-for j = 1:20
+for j = 51
     position = positions(j,:);
 
     % Initiliaze variables
@@ -76,7 +76,7 @@ for j = 1:20
     warn = 0;
 
     %% Lopp through muscles 
-    for muscle = 9
+    for muscle = 1:9
         tic
         warnCount = 0;
         complete = 0;
@@ -149,10 +149,10 @@ for j = 1:20
                 error_int = error_int + error_pos*tstep;
 
                 % PI calculation for time step
-                %handF = K*error_pos+I*error_int;
+                handF = K*error_pos+I*error_int;
 
                 %PID calculation for time step
-                handF= K*error_pos+I*error_int -B*Vhand;
+                %handF= K*error_pos+I*error_int -B*Vhand;
                 
                 % Arm Support
                 [dPhand_dx, Phand] = pos_jacobian(x,model);
@@ -212,8 +212,8 @@ for j = 1:20
             warn=1;
         end
         
-        %figure()
-        %plot_wrist_positions(xout,model,hand_goal);
+        figure()
+        plot_wrist_positions(xout,model,hand_goal);
         
         error_pos = calculate_error(xout,hand_goal,j);
         errors(j,:,muscle)=error_pos;
@@ -221,6 +221,8 @@ for j = 1:20
 
         cut = round(length(forces)*0.9);
         mean_force=mean(forces(cut:end,:));
+        create_osim(ndof, model, num2str(muscle), tout, xout)
+
         %plot_multiple(xout,uout,forces,tstep,tend,tout,hand_goal,model)
         %save(['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\Stimulated Forces/',num2str(j),'_',num2str(muscle),'.mat'],'xout','forces','x', 'mean_force', "armTorque");
         %close all;

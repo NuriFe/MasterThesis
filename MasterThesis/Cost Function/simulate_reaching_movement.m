@@ -19,8 +19,9 @@
     startPos = 13451;
     triceps = 0;
     triceps_stroke = 0;
-    
-    for indx =1:length(totry)
+    errors = zeros(length(totry),3);
+
+    for indx =[2 13 16 20]
         endPos = totry(indx);
         load('feasiblepoints.mat')
     
@@ -98,7 +99,7 @@
                 % If the hand has reached close to the Goal Pose change
                 % position in path.
                 % If not continue trying to reach the same point.
-                if distance < 0.05 || trial >0 
+                if distance < 0.05 || trial >0
                     if pathIdx < length(paths)
                         pathIdx=pathIdx+1;
                         fprintf("New point %s \n", string(pathIdx))
@@ -168,8 +169,8 @@
             % Compute desired torque
             tau_des = tau_feedback + staticTorque';
             
-            %stroke = 7;
-            stroke = 1;
+            stroke = 3;
+            %stroke = 1;
             % Time to switch activation and add the stroke function
             if mod(i,10)==0
                 alpha0=computeActivations(MFM,tau_des,alpha0);
@@ -189,25 +190,25 @@
                     u(mus)=alpha0(j)*1;
     
                 end
-                [~, Phand] = pos_jacobian(x,model);
-                error = abs(HandGoal-Phand);
-
-                triceps_stroke = u(129);
-
-                if triceps == 0
-                    triceps = 0.2;
-                else
-                    Kp = sigmoidGainControl(triceps_stroke,G(1),G(2),1,0.5);
-                    triceps = 0.2+Kp*triceps_stroke;
-
-                end
-
-                if triceps >1
-                    triceps = 1;
-                elseif triceps <0.2
-                    triceps = 0.2;
-                end
-                u(129:133)=triceps;
+                % [~, Phand] = pos_jacobian(x,model);
+                % error = abs(HandGoal-Phand);
+                % 
+                % triceps_stroke = u(129);
+                % 
+                % if triceps == 0
+                %     triceps = 0.2;
+                % else
+                %     Kp = sigmoidGainControl(triceps_stroke,G(1),G(2),1,0.5);
+                %     triceps = 0.2+Kp*triceps_stroke;
+                % 
+                % end
+                % 
+                % if triceps >1
+                %     triceps = 1;
+                % elseif triceps <0.2
+                %     triceps = 0.2;
+                % end
+                % u(129:133)=triceps;
             end
             u_triceps(i,:) = triceps_stroke;
             u_total(i,:) = triceps;
@@ -250,6 +251,8 @@
             x(iLce)=-3+6*rand(nmus,1); % randomly select initial Lce
         else
             complete=1;
+            errors(indx,:)=error;
+
             %h9 = figure(9);
             %plot_wrist_positions(xsave(1:i-1,:),model,HandGoal)
             %hold on
@@ -261,11 +264,18 @@
             %saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/Data\stroke/',filename, '_wp.jpg'])
             %saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\stroke/',filename,'_wp.fig'])
 
-            
             tout = tstep:tstep:timer;
-            uout = usave(1:i,:);
+            xout = xsave(1:i,:);
+            create_osim(ndof, model, num2str(indx), tout, xout)
+            %h9 = figure(9);
+            %plot_wrist_positions_2D(tout,xout,HandGoal)
+            %saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/Data/',sprintf('%.0f',indx),'.png']);
+
+
+            %tout = tstep:tstep:timer;
+            %uout = usave(1:i,:);
             %h10 = figure(10);
-            plot_neurexct(tout,uout);
+            %plot_neurexct(tout,uout);
             %filename = sprintf('G(%.2f)_G(%.2f)_Stroke_%d_position_totry(%d).png', G(1), G(2), stroke, endPos);
 
             %saveas(h10,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/Data\stroke/',filename, '_ne.jpg'])
@@ -282,10 +292,10 @@
             %view(-90,90);
             %hold off
             
-            u_triceps = u_triceps(1:i,:);
-            FES = FES(1:i,:);
-            u_total = u_total(1:i,:);
-            plotting_triceps_FES(tout, u_triceps, FES, u_total)
+            %u_triceps = u_triceps(1:i,:);
+            %FES = FES(1:i,:);
+            %u_total = u_total(1:i,:);
+            %plotting_triceps_FES(tout, u_triceps, FES, u_total)
         end
         
     

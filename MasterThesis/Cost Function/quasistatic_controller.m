@@ -22,7 +22,7 @@
     startPos = 13451;
 
     figure()
-    for indx =1:length(totry)
+    for indx =[13]%1:length(totry)
         endPos = totry(indx);
         load('feasiblepoints.mat')
         % Find Best Path using KNN
@@ -230,12 +230,12 @@
             errors(indx,:)=error;
 
             %h9 = figure(9);
-            %plot_wrist_positions(xsave(1:i-1,:),model,HandGoal)
-            %hold on
-            %wrists =  wristFeasible(paths,:);
-            %plot_wrist_references(wrists,model);
-            %view(-90,90);
-            %hold off
+            plot_wrist_positions(xsave(1:i-1,:),model,HandGoal)
+            hold on
+            wrists =  wristFeasible(paths,:);
+            plot_wrist_references(wrists,model);
+            view(-90,90);
+            hold off
             %filename = sprintf('G(%.2f)_G(%.2f)_Stroke_%d_position_totry(%d)', G(1), G(2), stroke, endPos);
             %saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/Data\stroke/',filename, '_wp.jpg'])
             %saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\stroke/',filename,'_wp.fig'])
@@ -247,7 +247,7 @@
             plot_wrist_positions_2D(tout,xout,HandGoal)
             saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/Data/',sprintf('%.0f',indx),'.png']);
 
-            uout = usave(1:i,:);
+            %uout = usave(1:i,:);
             %h10 = figure(10);
             %plot_neurexct(tout,uout);
             %filename = sprintf('G(%.2f)_G(%.2f)_Stroke_%d_position_totry(%d).png', G(1), G(2), stroke, endPos);

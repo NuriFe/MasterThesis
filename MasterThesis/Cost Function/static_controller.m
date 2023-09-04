@@ -147,7 +147,7 @@
         
             % PI Feedback
             Kp = 250;
-            Ki = 80;
+            Ki = 80;%80;
     
             Phand = wrist_position(x);
             sumErr=sumErr+(HandGoal-Phand)*tstep;
@@ -236,7 +236,7 @@
             errors(indx,:)=error;
 
             %h9 = figure(9);
-            %plot_wrist_positions(xsave(1:i-1,:),model,HandGoal)
+            plot_wrist_positions(xsave(1:i-1,:),model,HandGoal)
             %hold on
             %wrists =  wristFeasible(paths,:);
             %plot_wrist_references(wrists,model);
@@ -246,11 +246,10 @@
             %saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/Data\stroke/',filename, '_wp.jpg'])
             %saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis\Data\stroke/',filename,'_wp.fig'])
 
-            
-            tout = 0:tstep:timer;
-            h9 = figure(9);
-            plot_wrist_positions_2D(tout,xsave(1:i,:),HandGoal)
-            saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/Data/',sprintf('%.0f',indx),'.png']);
+           %tout = 0:tstep:timer;
+            %h9 = figure(9);
+            %plot_wrist_positions_2D(tout,xsave(1:i,:),HandGoal)
+            %saveas(h9,['C:\Users\s202421\Documents\GitHub\MasterThesis\MasterThesis/Data/',sprintf('%.0f',indx),'.png']);
 
             uout = usave(1:i,:);
             %h10 = figure(10);
